@@ -9,8 +9,10 @@
     {% for s in sets %}
     <div class="card">
         <p><strong>{{ s.nombre_ejercicio }}</strong></p>
-        <p>Peso: {{ s.peso }}kg | Reps: {{ s.repeticiones }} | Descanso: {{ s.tiempo_descanso }}s</p>
+        <p>Peso: {{ s.peso }}kg | Reps: {{ s.repeticiones }} | Descanso: {{ s.tiempo_descanso }} min</p>
         <a class="btn" href="{% url 'gym:detail' s.id %}">Ver detalle</a>
+        <a class="btn" href="{% url 'gym:update' s.id %}" style="background:#f0ad4e;">Editar</a>
+        <a class="btn" href="{% url 'gym:delete' s.id %}" style="background:#d9534f;">Eliminar</a>
     </div>
     {% endfor %}
 {% else %}

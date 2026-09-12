@@ -7,9 +7,11 @@
 
 <div class="card">
     <p><strong>Fecha:</strong> {{ workout.fecha }}</p>
-    <p><strong>Duracion:</strong> {{ workout.duracion }} minutos</p>
+    <p><strong>Duracion:</strong> {{ workout.duracion }} horas</p>
     <p><strong>Notas:</strong> {{ workout.notas|default:"Sin notas" }}</p>
 </div>
 
+<a class="btn" href="{% url 'workouts:update' workout.id %}" style="background:#f0ad4e;">Editar</a>
+<a class="btn" href="{% url 'workouts:delete' workout.id %}" style="background:#d9534f;">Eliminar</a>
 <a class="btn" href="{% url 'workouts:index' %}">Volver</a>
 {% endblock %}

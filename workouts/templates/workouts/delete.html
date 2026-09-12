@@ -1,0 +1,18 @@
+{% extends "base.html" %}
+
+{% block title %}Eliminar Entrenamiento{% endblock %}
+
+{% block content %}
+<h1>Eliminar Entrenamiento</h1>
+
+<div class="card">
+    <p>Seguro que quieres eliminar el entrenamiento del <strong>{{ workout.fecha }}</strong>?</p>
+    <p>Duracion: {{ workout.duracion }}h | {{ workout.notas|default:"Sin notas" }}</p>
+
+    <form method="post">
+        {% csrf_token %}
+        <button class="btn" type="submit" style="background:#d9534f;">Si, eliminar</button>
+        <a class="btn" href="{% url 'workouts:detail' workout.id %}" style="background:#555;">Cancelar</a>
+    </form>
+</div>
+{% endblock %}

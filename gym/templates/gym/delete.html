@@ -1,0 +1,18 @@
+{% extends "base.html" %}
+
+{% block title %}Eliminar Ejercicio{% endblock %}
+
+{% block content %}
+<h1>Eliminar Ejercicio</h1>
+
+<div class="card">
+    <p>Seguro que quieres eliminar <strong>{{ set.nombre_ejercicio }}</strong>?</p>
+    <p>Peso: {{ set.peso }}kg | Reps: {{ set.repeticiones }} | Descanso: {{ set.tiempo_descanso }} min</p>
+
+    <form method="post">
+        {% csrf_token %}
+        <button class="btn" type="submit" style="background:#d9534f;">Si, eliminar</button>
+        <a class="btn" href="{% url 'gym:detail' set.id %}" style="background:#555;">Cancelar</a>
+    </form>
+</div>
+{% endblock %}

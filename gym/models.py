@@ -11,7 +11,7 @@ class Set(models.Model):
     # Cantidad de repeticiones completadas en la serie
     repeticiones = models.IntegerField()
 
-    # Tiempo de descanso antes de la siguiente serie, en segundos (ej: 90)
+    # Tiempo de descanso antes de la siguiente serie, en minutos (ej: 2)
     tiempo_descanso = models.IntegerField()
 
     # Representación en texto del modelo

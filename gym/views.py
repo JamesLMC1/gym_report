@@ -32,3 +32,23 @@ def create(request):
     else:
         form = SetForm()
     return render(request, "gym/create.html", {"form": form})
+
+
+def update(request, set_id):
+    set_obj = get_object_or_404(Set, pk=set_id)
+    if request.method == 'POST':
+        form = SetForm(request.POST, instance=set_obj)
+        if form.is_valid():
+            form.save()
+            return redirect('gym:detail', set_id=set_id)
+    else:
+        form = SetForm(instance=set_obj)
+    return render(request, "gym/update.html", {"form": form, "set": set_obj})
+
+
+def delete(request, set_id):
+    set_obj = get_object_or_404(Set, pk=set_id)
+    if request.method == 'POST':
+        set_obj.delete()
+        return redirect('gym:all')
+    return render(request, "gym/delete.html", {"set": set_obj})

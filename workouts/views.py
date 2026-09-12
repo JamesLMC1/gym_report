@@ -22,3 +22,23 @@ def create(request):
     else:
         form = WorkoutForm()
     return render(request, "workouts/create.html", {"form": form})
+
+
+def update(request, workout_id):
+    w = get_object_or_404(Workout, pk=workout_id)
+    if request.method == 'POST':
+        form = WorkoutForm(request.POST, instance=w)
+        if form.is_valid():
+            form.save()
+            return redirect('workouts:detail', workout_id=workout_id)
+    else:
+        form = WorkoutForm(instance=w)
+    return render(request, "workouts/update.html", {"form": form, "workout": w})
+
+
+def delete(request, workout_id):
+    w = get_object_or_404(Workout, pk=workout_id)
+    if request.method == 'POST':
+        w.delete()
+        return redirect('workouts:index')
+    return render(request, "workouts/delete.html", {"workout": w})

@@ -8,8 +8,10 @@
 <div class="card">
     <p><strong>Peso:</strong> {{ set.peso }} kg</p>
     <p><strong>Repeticiones:</strong> {{ set.repeticiones }}</p>
-    <p><strong>Descanso:</strong> {{ set.tiempo_descanso }} segundos</p>
+    <p><strong>Descanso:</strong> {{ set.tiempo_descanso }} minutos</p>
 </div>
 
+<a class="btn" href="{% url 'gym:update' set.id %}" style="background:#f0ad4e;">Editar</a>
+<a class="btn" href="{% url 'gym:delete' set.id %}" style="background:#d9534f;">Eliminar</a>
 <a class="btn" href="{% url 'gym:index' %}">Volver</a>
 {% endblock %}

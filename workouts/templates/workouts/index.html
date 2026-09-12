@@ -8,9 +8,11 @@
 {% if workouts %}
     {% for w in workouts %}
     <div class="card">
-        <p><strong>{{ w.fecha }}</strong> — {{ w.duracion }} min</p>
+        <p><strong>{{ w.fecha }}</strong> — {{ w.duracion }}h</p>
         <p>{{ w.notas|default:"Sin notas" }}</p>
         <a class="btn" href="{% url 'workouts:detail' w.id %}">Ver detalle</a>
+        <a class="btn" href="{% url 'workouts:update' w.id %}" style="background:#f0ad4e;">Editar</a>
+        <a class="btn" href="{% url 'workouts:delete' w.id %}" style="background:#d9534f;">Eliminar</a>
     </div>
     {% endfor %}
 {% else %}
