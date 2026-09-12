@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Gym Report{% endblock %}</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: Arial, sans-serif; background: #1a1a2e; color: #eee; padding: 20px; }
+        nav { background: #16213e; padding: 15px; margin-bottom: 20px; border-radius: 8px; }
+        nav a { color: #e94560; text-decoration: none; margin-right: 15px; font-weight: bold; }
+        nav a:hover { text-decoration: underline; }
+        .container { max-width: 800px; margin: 0 auto; }
+        h1 { color: #e94560; margin-bottom: 15px; }
+        h2 { color: #e94560; margin-bottom: 10px; }
+        .card { background: #16213e; padding: 15px; margin-bottom: 10px; border-radius: 8px; }
+        .card p { margin: 5px 0; }
+        a { color: #0f3460; }
+        .btn { display: inline-block; background: #e94560; color: #fff; padding: 8px 16px; border-radius: 5px; text-decoration: none; margin-top: 10px; }
+        .btn:hover { background: #c73652; }
+        .empty { color: #999; font-style: italic; }
+        form p { margin: 10px 0; }
+        form label { display: block; margin-bottom: 5px; font-weight: bold; color: #e94560; }
+        form input, form textarea, form select { width: 100%; padding: 8px; border: 1px solid #333; border-radius: 5px; background: #0f3460; color: #eee; }
+    </style>
+</head>
+<body>
+    <nav>
+        <a href="{% url 'gym:index' %}">Ejercicios</a>
+        <a href="{% url 'gym:all' %}">Todos</a>
+        <a href="{% url 'gym:create' %}">+ Ejercicio</a>
+        <a href="{% url 'workouts:index' %}">Entrenamientos</a>
+        <a href="{% url 'workouts:create' %}">+ Entrenamiento</a>
+    </nav>
+    <div class="container">
+        {% block content %}{% endblock %}
+    </div>
+</body>
+</html>

@@ -1,0 +1,19 @@
+{% extends "base.html" %}
+
+{% block title %}Ejercicio: {{ exercise_name }}{% endblock %}
+
+{% block content %}
+<h1>Sets de "{{ exercise_name }}"</h1>
+
+{% if sets %}
+    {% for s in sets %}
+    <div class="card">
+        <p><strong>{{ s.nombre_ejercicio }}</strong></p>
+        <p>Peso: {{ s.peso }}kg | Reps: {{ s.repeticiones }} | Descanso: {{ s.tiempo_descanso }}s</p>
+        <a class="btn" href="{% url 'gym:detail' s.id %}">Ver detalle</a>
+    </div>
+    {% endfor %}
+{% else %}
+    <p class="empty">No se encontraron sets para "{{ exercise_name }}".</p>
+{% endif %}
+{% endblock %}

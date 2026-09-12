@@ -1,0 +1,15 @@
+{% extends "base.html" %}
+
+{% block title %}Detalle de Entrenamiento{% endblock %}
+
+{% block content %}
+<h1>Entrenamiento del {{ workout.fecha }}</h1>
+
+<div class="card">
+    <p><strong>Fecha:</strong> {{ workout.fecha }}</p>
+    <p><strong>Duracion:</strong> {{ workout.duracion }} minutos</p>
+    <p><strong>Notas:</strong> {{ workout.notas|default:"Sin notas" }}</p>
+</div>
+
+<a class="btn" href="{% url 'workouts:index' %}">Volver</a>
+{% endblock %}

@@ -1,0 +1,19 @@
+{% extends "base.html" %}
+
+{% block title %}Entrenamientos{% endblock %}
+
+{% block content %}
+<h1>Entrenamientos</h1>
+
+{% if workouts %}
+    {% for w in workouts %}
+    <div class="card">
+        <p><strong>{{ w.fecha }}</strong> — {{ w.duracion }} min</p>
+        <p>{{ w.notas|default:"Sin notas" }}</p>
+        <a class="btn" href="{% url 'workouts:detail' w.id %}">Ver detalle</a>
+    </div>
+    {% endfor %}
+{% else %}
+    <p class="empty">No hay entrenamientos registrados aun.</p>
+{% endif %}
+{% endblock %}

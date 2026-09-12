@@ -1,29 +1,24 @@
-from django.http import HttpResponse
-from django.shortcuts import get_object_or_404
+from django.shortcuts import render, get_object_or_404, redirect
 from .models import Workout
+from .forms import WorkoutForm
 
 
 def index(request):
-    # Lista los últimos 5 entrenamientos
     latest = Workout.objects.all()[:5]
-
-    if not latest:
-        return HttpResponse("No hay entrenamientos registrados aún.")
-
-    lines = []
-    for i, w in enumerate(latest, start=1):
-        lines.append(f"{i}. {w.fecha} — {w.duracion} min — {w.notas or 'Sin notas'}")
-
-    return HttpResponse("\n".join(lines))
+    return render(request, "workouts/index.html", {"workouts": latest})
 
 
 def detail(request, workout_id):
-    # Detalle de un entrenamiento por su ID
     w = get_object_or_404(Workout, pk=workout_id)
+    return render(request, "workouts/detail.html", {"workout": w})
 
-    output = (
-        f"Fecha: {w.fecha}\n"
-        f"Duración: {w.duracion} minutos\n"
-        f"Notas: {w.notas or 'Sin notas'}"
-    )
-    return HttpResponse(output)
+
+def create(request):
+    if request.method == 'POST':
+        form = WorkoutForm(request.POST)
+        if form.is_valid():
+            form.save()
+            return redirect('workouts:index')
+    else:
+        form = WorkoutForm()
+    return render(request, "workouts/create.html", {"form": form})

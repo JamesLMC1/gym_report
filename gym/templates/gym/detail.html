@@ -1,0 +1,15 @@
+{% extends "base.html" %}
+
+{% block title %}Detalle de Ejercicio{% endblock %}
+
+{% block content %}
+<h1>{{ set.nombre_ejercicio }}</h1>
+
+<div class="card">
+    <p><strong>Peso:</strong> {{ set.peso }} kg</p>
+    <p><strong>Repeticiones:</strong> {{ set.repeticiones }}</p>
+    <p><strong>Descanso:</strong> {{ set.tiempo_descanso }} segundos</p>
+</div>
+
+<a class="btn" href="{% url 'gym:index' %}">Volver</a>
+{% endblock %}
