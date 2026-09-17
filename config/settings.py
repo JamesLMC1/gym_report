@@ -17,6 +17,8 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'gym.apps.GymConfig',
     'workouts.apps.WorkoutsConfig',
+    'usuarios.apps.UsuariosConfig',
+    'dietas.apps.DietasConfig',
 ]
 
 MIDDLEWARE = [
@@ -34,13 +36,14 @@ ROOT_URLCONF = 'config.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [],
+        'DIRS': [BASE_DIR / 'templates'],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
                 'django.template.context_processors.request',
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
+                'config.context_processors.flow_status',
             ],
         },
     },

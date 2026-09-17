@@ -1,0 +1,20 @@
+{% extends "base.html" %}
+
+{% block title %}{{ usuario.nombre }}{% endblock %}
+
+{% block content %}
+<h1>{{ usuario.nombre }}</h1>
+<a href="{% url 'usuarios:index' %}" class="btn">Volver</a>
+<a href="{% url 'usuarios:edit' usuario.id %}" class="btn">Editar</a>
+<br><br>
+<div class="card">
+    <p class="info"><strong>Nombre:</strong> {{ usuario.nombre }}</p>
+    <p class="info"><strong>Edad:</strong> {{ usuario.edad }} años</p>
+    <p class="info"><strong>Peso:</strong> {{ usuario.peso }}kg</p>
+    <p class="info"><strong>Estatura:</strong> {{ usuario.estatura }}cm</p>
+</div>
+<form method="post" action="{% url 'usuarios:delete' usuario.id %}">
+    {% csrf_token %}
+    <button type="submit" class="btn btn-danger" onclick="return confirm('¿Eliminar este usuario?')">Eliminar</button>
+</form>
+{% endblock %}

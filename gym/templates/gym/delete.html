@@ -1,0 +1,18 @@
+{% extends "base.html" %}
+
+{% block title %}Eliminar {{ set_obj.nombre_ejercicio }}{% endblock %}
+
+{% block content %}
+<h1>Eliminar Set</h1>
+<a href="{% url 'gym:detail' set_obj.id %}" class="btn">Volver</a>
+<br><br>
+<div class="card">
+    <p>¿Estás seguro de que quieres eliminar <strong>{{ set_obj.nombre_ejercicio }}</strong>?</p>
+    <form method="post">
+        {% csrf_token %}
+        <div class="actions">
+            <button type="submit" class="btn btn-danger">Eliminar</button>
+        </div>
+    </form>
+</div>
+{% endblock %}

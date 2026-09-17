@@ -1,0 +1,23 @@
+{% extends "base.html" %}
+
+{% block title %}Catálogo de Ejercicios{% endblock %}
+
+{% block content %}
+<h1>Catálogo de Ejercicios</h1>
+<a href="{% url 'gym:index' %}" class="btn">Volver</a>
+<br><br>
+{% if ejercicios %}
+    {% for e in ejercicios %}
+    <div class="card">
+        <a href="{% url 'gym:crear_desde_ejercicio' e.id %}">{{ e.nombre }}</a>
+        <p class="info"><strong>Grupo muscular:</strong> {{ e.grupo_muscular }}</p>
+        <p class="info"><strong>Dificultad:</strong> {{ e.dificultad }}</p>
+        {% if e.descripcion %}
+        <p class="info">{{ e.descripcion }}</p>
+        {% endif %}
+    </div>
+    {% endfor %}
+{% else %}
+    <p class="empty">No se pudieron cargar los ejercicios del catálogo.</p>
+{% endif %}
+{% endblock %}

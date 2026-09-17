@@ -1,0 +1,19 @@
+{% extends "base.html" %}
+
+{% block title %}Entrenamiento del {{ workout.fecha }}{% endblock %}
+
+{% block content %}
+<h1>Entrenamiento del {{ workout.fecha }}</h1>
+<a href="{% url 'workouts:index' %}" class="btn">Volver</a>
+<a href="{% url 'workouts:edit' workout.id %}" class="btn">Editar</a>
+<br><br>
+<div class="card">
+    <p class="info"><strong>Fecha:</strong> {{ workout.fecha }}</p>
+    <p class="info"><strong>Duración:</strong> {{ workout.duracion }} minutos</p>
+    <p class="info"><strong>Notas:</strong> {{ workout.notas|default:"Sin notas" }}</p>
+</div>
+<form method="post" action="{% url 'workouts:delete' workout.id %}">
+    {% csrf_token %}
+    <button type="submit" class="btn btn-danger" onclick="return confirm('¿Eliminar este entrenamiento?')">Eliminar</button>
+</form>
+{% endblock %}

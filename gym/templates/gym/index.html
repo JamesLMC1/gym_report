@@ -1,0 +1,22 @@
+{% extends "base.html" %}
+
+{% block title %}Gym - Últimos Sets{% endblock %}
+
+{% block content %}
+<h1>Últimos Sets Registrados</h1>
+<a href="{% url 'gym:catalogo' %}" class="btn btn-success">+ Desde Catálogo</a>
+<a href="{% url 'gym:create' %}" class="btn">+ Manual</a>
+<a href="{% url 'gym:all' %}" class="btn">Ver todos</a>
+<a href="{% url 'gym:rutinas' %}" class="btn">Rutinas</a>
+<br><br>
+{% if latest_set_list %}
+    {% for s in latest_set_list %}
+    <div class="card">
+        <a href="{% url 'gym:detail' s.id %}">{{ s.nombre_ejercicio }}</a>
+        <p class="info">Peso: {{ s.peso }}kg | Reps: {{ s.repeticiones }} | Descanso: {{ s.tiempo_descanso }}s</p>
+    </div>
+    {% endfor %}
+{% else %}
+    <p class="empty">No hay registros de ejercicios aún.</p>
+{% endif %}
+{% endblock %}

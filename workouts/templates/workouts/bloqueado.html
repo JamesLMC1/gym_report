@@ -1,0 +1,13 @@
+{% extends "base.html" %}
+
+{% block title %}Entrenamientos - Acceso bloqueado{% endblock %}
+
+{% block content %}
+<h1>Entrenamientos</h1>
+<div class="card">
+    <p style="color: #e67e22; font-weight: bold;">{{ mensaje }}</p>
+    <br>
+    <a href="{% url 'usuarios:index' %}" class="btn">Ir a Usuarios</a>
+    <a href="{% url 'gym:index' %}" class="btn">Ir a Gym</a>
+</div>
+{% endblock %}

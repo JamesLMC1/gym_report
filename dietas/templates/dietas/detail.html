@@ -1,0 +1,21 @@
+{% extends "base.html" %}
+
+{% block title %}{{ comida.nombre }}{% endblock %}
+
+{% block content %}
+<h1>{{ comida.nombre }}</h1>
+<a href="{% url 'dietas:index' %}" class="btn">Volver</a>
+<br><br>
+<div class="card">
+    <p class="info"><strong>Tipo:</strong> {{ comida.tipo }}</p>
+    <p class="info"><strong>Calorías:</strong> {{ comida.calorias }} kcal</p>
+    <p class="info"><strong>Proteínas:</strong> {{ comida.proteinas_g }}g</p>
+    <p class="info"><strong>Carbohidratos:</strong> {{ comida.carbos_g }}g</p>
+    <p class="info"><strong>Grasas:</strong> {{ comida.grasas_g }}g</p>
+    {% if comida.receta %}
+    <hr style="margin: 15px 0; border-color: #eee;">
+    <p class="info"><strong>Receta:</strong></p>
+    <p>{{ comida.receta }}</p>
+    {% endif %}
+</div>
+{% endblock %}

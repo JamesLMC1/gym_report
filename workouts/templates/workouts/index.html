@@ -1,0 +1,19 @@
+{% extends "base.html" %}
+
+{% block title %}Entrenamientos{% endblock %}
+
+{% block content %}
+<h1>Últimos Entrenamientos</h1>
+<a href="{% url 'workouts:create' %}" class="btn btn-success">+ Nuevo Entrenamiento</a>
+<br><br>
+{% if latest %}
+    {% for w in latest %}
+    <div class="card">
+        <a href="{% url 'workouts:detail' w.id %}">Entrenamiento del {{ w.fecha }}</a>
+        <p class="info">Duración: {{ w.duracion }} min | {{ w.notas|default:"Sin notas" }}</p>
+    </div>
+    {% endfor %}
+{% else %}
+    <p class="empty">No hay entrenamientos registrados aún.</p>
+{% endif %}
+{% endblock %}

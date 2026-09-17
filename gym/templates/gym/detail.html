@@ -1,0 +1,19 @@
+{% extends "base.html" %}
+
+{% block title %}{{ set_obj.nombre_ejercicio }}{% endblock %}
+
+{% block content %}
+<h1>{{ set_obj.nombre_ejercicio }}</h1>
+<a href="{% url 'gym:index' %}" class="btn">Volver</a>
+<a href="{% url 'gym:edit' set_obj.id %}" class="btn">Editar</a>
+<br><br>
+<div class="card">
+    <p class="info"><strong>Peso:</strong> {{ set_obj.peso }}kg</p>
+    <p class="info"><strong>Repeticiones:</strong> {{ set_obj.repeticiones }}</p>
+    <p class="info"><strong>Descanso:</strong> {{ set_obj.tiempo_descanso }} segundos</p>
+</div>
+<form method="post" action="{% url 'gym:delete' set_obj.id %}">
+    {% csrf_token %}
+    <button type="submit" class="btn btn-danger" onclick="return confirm('¿Eliminar este set?')">Eliminar</button>
+</form>
+{% endblock %}

@@ -1,0 +1,19 @@
+{% extends "base.html" %}
+
+{% block title %}Gym - Todos los Sets{% endblock %}
+
+{% block content %}
+<h1>Todos los Sets</h1>
+<a href="{% url 'gym:index' %}" class="btn">Volver</a>
+<br><br>
+{% if all_sets %}
+    {% for s in all_sets %}
+    <div class="card">
+        <a href="{% url 'gym:detail' s.id %}">{{ s.nombre_ejercicio }}</a>
+        <p class="info">Peso: {{ s.peso }}kg | Reps: {{ s.repeticiones }} | Descanso: {{ s.tiempo_descanso }}s</p>
+    </div>
+    {% endfor %}
+{% else %}
+    <p class="empty">No hay registros de ejercicios aún.</p>
+{% endif %}
+{% endblock %}

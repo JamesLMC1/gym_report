@@ -1,0 +1,22 @@
+{% extends "base.html" %}
+
+{% block title %}Rutinas{% endblock %}
+
+{% block content %}
+<h1>Rutinas Disponibles</h1>
+<a href="{% url 'gym:index' %}" class="btn">Volver</a>
+<br><br>
+{% if rutinas %}
+    {% for r in rutinas %}
+    <div class="card">
+        <a href="{% url 'gym:rutina_detail' r.id %}">{{ r.nombre }}</a>
+        <p class="info"><strong>Nivel:</strong> {{ r.nivel }} | <strong>Duración:</strong> {{ r.duracion_dias }} días</p>
+        {% if r.descripcion %}
+        <p class="info">{{ r.descripcion }}</p>
+        {% endif %}
+    </div>
+    {% endfor %}
+{% else %}
+    <p class="empty">No se pudieron cargar las rutinas.</p>
+{% endif %}
+{% endblock %}

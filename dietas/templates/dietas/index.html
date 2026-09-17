@@ -1,0 +1,18 @@
+{% extends "base.html" %}
+
+{% block title %}Dietas - Comidas{% endblock %}
+
+{% block content %}
+<h1>Comidas Disponibles</h1>
+{% if comidas %}
+    {% for c in comidas %}
+    <div class="card">
+        <a href="{% url 'dietas:detail' c.id %}">{{ c.nombre }}</a>
+        <p class="info"><strong>Tipo:</strong> {{ c.tipo }}</p>
+        <p class="info"><strong>Calorías:</strong> {{ c.calorias }} kcal | <strong>Proteínas:</strong> {{ c.proteinas_g }}g | <strong>Carbos:</strong> {{ c.carbos_g }}g | <strong>Grasas:</strong> {{ c.grasas_g }}g</p>
+    </div>
+    {% endfor %}
+{% else %}
+    <p class="empty">No se pudieron cargar las comidas.</p>
+{% endif %}
+{% endblock %}

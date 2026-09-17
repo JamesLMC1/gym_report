@@ -1,0 +1,19 @@
+{% extends "base.html" %}
+
+{% block title %}Usuarios{% endblock %}
+
+{% block content %}
+<h1>Usuarios Registrados</h1>
+<a href="{% url 'usuarios:create' %}" class="btn btn-success">+ Nuevo Usuario</a>
+<br><br>
+{% if latest %}
+    {% for u in latest %}
+    <div class="card">
+        <a href="{% url 'usuarios:detail' u.id %}">{{ u.nombre }}</a>
+        <p class="info">Edad: {{ u.edad }} años | Peso: {{ u.peso }}kg | Estatura: {{ u.estatura }}cm</p>
+    </div>
+    {% endfor %}
+{% else %}
+    <p class="empty">No hay usuarios registrados aún.</p>
+{% endif %}
+{% endblock %}
