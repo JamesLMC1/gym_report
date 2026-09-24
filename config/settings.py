@@ -1,6 +1,11 @@
 from pathlib import Path
 
+from config.env import load_env
+
 BASE_DIR = Path(__file__).resolve().parent.parent
+
+load_env()
+
 
 SECRET_KEY = 'django-insecure-d*363e5^9)gxoqttzpljd)1itqj9m=w8&m&6k87*tgokvm0k$@'
 
@@ -19,6 +24,7 @@ INSTALLED_APPS = [
     'workouts.apps.WorkoutsConfig',
     'usuarios.apps.UsuariosConfig',
     'dietas.apps.DietasConfig',
+    'chat.apps.ChatConfig',
 ]
 
 MIDDLEWARE = [

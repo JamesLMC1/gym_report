@@ -40,6 +40,7 @@
         <a href="{% url 'gym:index' %}">2. Gym {% if tiene_ejercicios %}<span class="nav-check">&#10003;</span>{% elif not tiene_usuarios %}<span class="nav-lock">&#128274;</span>{% endif %}</a>
         <a href="{% url 'workouts:index' %}">3. Entrenamientos {% if not tiene_ejercicios and tiene_usuarios %}<span class="nav-lock">&#128274;</span>{% elif tiene_ejercicios %}<span class="nav-check">&#10003;</span>{% endif %}</a>
         <a href="{% url 'dietas:index' %}">4. Dietas</a>
+        <a href="{% url 'chat:index' %}">5. Chat Gym</a>
         <a href="{% url 'admin:index' %}">Admin</a>
     </nav>
     <div class="container">
