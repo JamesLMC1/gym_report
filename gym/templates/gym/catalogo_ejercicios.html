@@ -3,13 +3,22 @@
 {% block title %}Catálogo de Ejercicios{% endblock %}
 
 {% block content %}
-<h1>Catálogo de Ejercicios</h1>
-<a href="{% url 'gym:index' %}" class="btn">Volver</a>
-<br><br>
+<div class="page-head">
+    <span class="eyebrow">Biblioteca</span>
+    <h1>Catálogo de Ejercicios</h1>
+    <p class="lead">Elige un ejercicio para registrar una serie a partir de sus parámetros.</p>
+</div>
+
+<div class="toolbar">
+    <a href="{% url 'gym:index' %}" class="btn">Volver</a>
+</div>
+
 {% if ejercicios %}
+    <div class="card-grid">
     {% for e in ejercicios %}
     <div class="card">
         <a href="{% url 'gym:crear_desde_ejercicio' e.id %}">{{ e.nombre }}</a>
+        <span class="badge">{{ e.grupo_muscular }}</span>
         <p class="info"><strong>Grupo muscular:</strong> {{ e.grupo_muscular }}</p>
         <p class="info"><strong>Dificultad:</strong> {{ e.dificultad }}</p>
         {% if e.descripcion %}
@@ -17,6 +26,7 @@
         {% endif %}
     </div>
     {% endfor %}
+    </div>
 {% else %}
     <p class="empty">No se pudieron cargar los ejercicios del catálogo.</p>
 {% endif %}

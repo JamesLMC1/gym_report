@@ -3,10 +3,17 @@
 {% block title %}Eliminar Entrenamiento{% endblock %}
 
 {% block content %}
-<h1>Eliminar Entrenamiento</h1>
-<a href="{% url 'workouts:detail' workout.id %}" class="btn">Volver</a>
-<br><br>
-<div class="card">
+<div class="page-head">
+    <span class="eyebrow">Zona de riesgo</span>
+    <h1>Eliminar Entrenamiento</h1>
+</div>
+
+<div class="toolbar">
+    <a href="{% url 'workouts:detail' workout.id %}" class="btn">Volver</a>
+</div>
+
+<div class="card warning">
+    <p class="warn-msg">Esta acción no se puede deshacer.</p>
     <p>¿Estás seguro de que quieres eliminar el entrenamiento del <strong>{{ workout.fecha }}</strong>?</p>
     <form method="post">
         {% csrf_token %}

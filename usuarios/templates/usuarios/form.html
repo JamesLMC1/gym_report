@@ -3,10 +3,16 @@
 {% block title %}{{ titulo }}{% endblock %}
 
 {% block content %}
-<h1>{{ titulo }}</h1>
-<a href="{% url 'usuarios:index' %}" class="btn">Volver</a>
-<br><br>
-<div class="card">
+<div class="page-head">
+    <span class="eyebrow">Paso 01 / Perfiles</span>
+    <h1>{{ titulo }}</h1>
+</div>
+
+<div class="toolbar">
+    <a href="{% url 'usuarios:index' %}" class="btn">Volver</a>
+</div>
+
+<div class="card form-wrap">
     <form method="post">
         {% csrf_token %}
         {% for field in form %}
@@ -14,7 +20,7 @@
             <label for="{{ field.id_for_label }}">{{ field.label }}</label>
             {{ field }}
             {% if field.errors %}
-                <p style="color: #e74c3c;">{{ field.errors.0 }}</p>
+                <ul class="errorlist"><li>{{ field.errors.0 }}</li></ul>
             {% endif %}
         </div>
         {% endfor %}

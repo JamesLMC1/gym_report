@@ -3,16 +3,28 @@
 {% block title %}Entrenamientos{% endblock %}
 
 {% block content %}
-<h1>Últimos Entrenamientos</h1>
-<a href="{% url 'workouts:create' %}" class="btn btn-success">+ Nuevo Entrenamiento</a>
-<br><br>
+<div class="page-head">
+    <span class="eyebrow">Paso 03 / Sesiones</span>
+    <h1>Últimos Entrenamientos</h1>
+    <p class="lead">El historial de cada sesión: fecha, duración y notas.</p>
+</div>
+
+<div class="toolbar">
+    <a href="{% url 'workouts:create' %}" class="btn btn-success">+ Nuevo Entrenamiento</a>
+</div>
+
 {% if latest %}
+    <div class="card-grid">
     {% for w in latest %}
     <div class="card">
         <a href="{% url 'workouts:detail' w.id %}">Entrenamiento del {{ w.fecha }}</a>
-        <p class="info">Duración: {{ w.duracion }} min | {{ w.notas|default:"Sin notas" }}</p>
+        <div class="chips">
+            <span class="chip">Duración <b>{{ w.duracion }} min</b></span>
+        </div>
+        <p class="info">{{ w.notas|default:"Sin notas" }}</p>
     </div>
     {% endfor %}
+    </div>
 {% else %}
     <p class="empty">No hay entrenamientos registrados aún.</p>
 {% endif %}

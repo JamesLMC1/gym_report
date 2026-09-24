@@ -3,16 +3,29 @@
 {% block title %}Usuarios{% endblock %}
 
 {% block content %}
-<h1>Usuarios Registrados</h1>
-<a href="{% url 'usuarios:create' %}" class="btn btn-success">+ Nuevo Usuario</a>
-<br><br>
+<div class="page-head">
+    <span class="eyebrow">Paso 01 / Perfiles</span>
+    <h1>Usuarios Registrados</h1>
+    <p class="lead">Registra los atletas para desbloquear el resto del flujo de entrenamiento.</p>
+</div>
+
+<div class="toolbar">
+    <a href="{% url 'usuarios:create' %}" class="btn btn-success">+ Nuevo Usuario</a>
+</div>
+
 {% if latest %}
+    <div class="card-grid">
     {% for u in latest %}
     <div class="card">
         <a href="{% url 'usuarios:detail' u.id %}">{{ u.nombre }}</a>
-        <p class="info">Edad: {{ u.edad }} años | Peso: {{ u.peso }}kg | Estatura: {{ u.estatura }}cm</p>
+        <div class="chips">
+            <span class="chip">Edad <b>{{ u.edad }}</b></span>
+            <span class="chip">Peso <b>{{ u.peso }}kg</b></span>
+            <span class="chip">Estatura <b>{{ u.estatura }}cm</b></span>
+        </div>
     </div>
     {% endfor %}
+    </div>
 {% else %}
     <p class="empty">No hay usuarios registrados aún.</p>
 {% endif %}

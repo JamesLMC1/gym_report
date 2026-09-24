@@ -3,10 +3,17 @@
 {% block title %}Eliminar {{ usuario.nombre }}{% endblock %}
 
 {% block content %}
-<h1>Eliminar Usuario</h1>
-<a href="{% url 'usuarios:detail' usuario.id %}" class="btn">Volver</a>
-<br><br>
-<div class="card">
+<div class="page-head">
+    <span class="eyebrow">Zona de riesgo</span>
+    <h1>Eliminar Usuario</h1>
+</div>
+
+<div class="toolbar">
+    <a href="{% url 'usuarios:detail' usuario.id %}" class="btn">Volver</a>
+</div>
+
+<div class="card warning">
+    <p class="warn-msg">Esta acción no se puede deshacer.</p>
     <p>¿Estás seguro de que quieres eliminar a <strong>{{ usuario.nombre }}</strong>?</p>
     <form method="post">
         {% csrf_token %}

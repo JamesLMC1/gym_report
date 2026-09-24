@@ -3,16 +3,28 @@
 {% block title %}Sets de {{ exercise_name }}{% endblock %}
 
 {% block content %}
-<h1>Sets de "{{ exercise_name }}"</h1>
-<a href="{% url 'gym:index' %}" class="btn">Volver</a>
-<br><br>
+<div class="page-head">
+    <span class="eyebrow">Filtrado por ejercicio</span>
+    <h1>Sets de "{{ exercise_name }}"</h1>
+</div>
+
+<div class="toolbar">
+    <a href="{% url 'gym:index' %}" class="btn">Volver</a>
+</div>
+
 {% if sets %}
+    <div class="card-grid">
     {% for s in sets %}
     <div class="card">
         <a href="{% url 'gym:detail' s.id %}">{{ s.nombre_ejercicio }}</a>
-        <p class="info">Peso: {{ s.peso }}kg | Reps: {{ s.repeticiones }} | Descanso: {{ s.tiempo_descanso }}s</p>
+        <div class="chips">
+            <span class="chip">Peso <b>{{ s.peso }}kg</b></span>
+            <span class="chip">Reps <b>{{ s.repeticiones }}</b></span>
+            <span class="chip">Descanso <b>{{ s.tiempo_descanso }}s</b></span>
+        </div>
     </div>
     {% endfor %}
+    </div>
 {% else %}
     <p class="empty">No se encontraron sets para "{{ exercise_name }}".</p>
 {% endif %}

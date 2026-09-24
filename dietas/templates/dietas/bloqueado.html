@@ -3,10 +3,16 @@
 {% block title %}Dietas - Acceso bloqueado{% endblock %}
 
 {% block content %}
-<h1>Dietas</h1>
-<div class="card">
-    <p style="color: #e67e22; font-weight: bold;">{{ mensaje }}</p>
-    <br>
-    <a href="{% url 'usuarios:index' %}" class="btn btn-success">Ir a Usuarios</a>
+<div class="page-head">
+    <span class="eyebrow">Paso 04 / Nutrición</span>
+    <h1>Dietas</h1>
+</div>
+
+<div class="card warning">
+    <span class="badge ember">Bloqueado</span>
+    <p class="warn-msg">{{ mensaje }}</p>
+    <div class="actions">
+        <a href="{% url 'usuarios:index' %}" class="btn btn-success">Ir a Usuarios</a>
+    </div>
 </div>
 {% endblock %}

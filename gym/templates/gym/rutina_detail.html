@@ -3,31 +3,44 @@
 {% block title %}{{ rutina.nombre }}{% endblock %}
 
 {% block content %}
-<h1>{{ rutina.nombre }}</h1>
-<a href="{% url 'gym:rutinas' %}" class="btn">Volver</a>
-<br><br>
+<div class="page-head">
+    <span class="eyebrow">Programa</span>
+    <h1>{{ rutina.nombre }}</h1>
+</div>
+
+<div class="toolbar">
+    <a href="{% url 'gym:rutinas' %}" class="btn">Volver</a>
+</div>
+
 <div class="card">
-    <p class="info"><strong>Nivel:</strong> {{ rutina.nivel }}</p>
-    <p class="info"><strong>Duración:</strong> {{ rutina.duracion_dias }} días</p>
+    <div class="chips">
+        <span class="chip">Nivel <b>{{ rutina.nivel }}</b></span>
+        <span class="chip">Duración <b>{{ rutina.duracion_dias }}d</b></span>
+    </div>
     {% if rutina.descripcion %}
-    <p class="info">{{ rutina.descripcion }}</p>
+    <p class="info" style="margin-top:14px;">{{ rutina.descripcion }}</p>
     {% endif %}
 </div>
 
 {% if rutina.ejercicios %}
-<h2 style="margin-top: 20px;">Ejercicios de la Rutina</h2>
+<h2>Ejercicios de la Rutina</h2>
+<div class="card-grid">
 {% for re in rutina.ejercicios %}
 <div class="card">
-    <p><strong>{{ re.ejercicios.nombre }}</strong></p>
-    <p class="info">Grupo muscular: {{ re.ejercicios.grupo_muscular }} | Dificultad: {{ re.ejercicios.dificultad }}</p>
+    <span class="badge acid">{{ re.ejercicios.grupo_muscular }}</span>
+    <span class="card-title">{{ re.ejercicios.nombre }}</span>
+    <p class="info">Dificultad: {{ re.ejercicios.dificultad }}</p>
     {% if re.ejercicios.descripcion %}
     <p class="info">{{ re.ejercicios.descripcion }}</p>
     {% endif %}
-    {% if re.series %}<p class="info">Series: {{ re.series }}</p>{% endif %}
-    {% if re.repeticiones %}<p class="info">Repeticiones: {{ re.repeticiones }}</p>{% endif %}
-    {% if re.descanso_segundos %}<p class="info">Descanso: {{ re.descanso_segundos }}s</p>{% endif %}
+    <div class="chips">
+        {% if re.series %}<span class="chip">Series <b>{{ re.series }}</b></span>{% endif %}
+        {% if re.repeticiones %}<span class="chip">Reps <b>{{ re.repeticiones }}</b></span>{% endif %}
+        {% if re.descanso_segundos %}<span class="chip">Descanso <b>{{ re.descanso_segundos }}s</b></span>{% endif %}
+    </div>
 </div>
 {% endfor %}
+</div>
 {% else %}
 <p class="empty">Esta rutina no tiene ejercicios asignados.</p>
 {% endif %}

@@ -21,3 +21,7 @@ media/
 .vscode/
 .DS_Store
 Thumbs.db
+
+.agents
+
+skills-lock.json
