@@ -1,0 +1,25 @@
+{% extends "base.html" %}
+
+{% block title %}{{ receta.nombre }}{% endblock %}
+
+{% block content %}
+<h1>{{ receta.nombre }}</h1>
+<a href="{% url 'dietas:index' %}" class="btn">Volver</a>
+<br><br>
+<div class="card">
+    <p class="info"><strong>Tipo:</strong> {{ receta.get_tipo_display }}</p>
+    <p class="info"><strong>Calorías:</strong> {{ receta.calorias }} kcal</p>
+    <p class="info"><strong>Proteínas:</strong> {{ receta.proteinas_g }}g</p>
+    <p class="info"><strong>Carbohidratos:</strong> {{ receta.carbos_g }}g</p>
+    <p class="info"><strong>Grasas:</strong> {{ receta.grasas_g }}g</p>
+    {% if receta.receta %}
+    <hr style="margin: 15px 0; border-color: #eee;">
+    <p class="info"><strong>Preparación:</strong></p>
+    <p>{{ receta.receta|linebreaks }}</p>
+    {% endif %}
+    <div class="actions" style="margin-top: 15px;">
+        <a href="{% url 'dietas:receta_edit' receta.id %}" class="btn">Editar</a>
+        <a href="{% url 'dietas:receta_delete' receta.id %}" class="btn btn-danger">Eliminar</a>
+    </div>
+</div>
+{% endblock %}

@@ -15,4 +15,19 @@
 {% else %}
     <p class="empty">No se pudieron cargar las comidas.</p>
 {% endif %}
+
+<hr style="margin: 30px 0; border-color: #ddd;">
+
+<h1>Mis Recetas <a href="{% url 'dietas:receta_create' %}" class="btn btn-success">+ Nueva</a></h1>
+{% if recetas %}
+    {% for r in recetas %}
+    <div class="card">
+        <a href="{% url 'dietas:receta_detail' r.id %}">{{ r.nombre }}</a>
+        <p class="info"><strong>Tipo:</strong> {{ r.get_tipo_display }}</p>
+        <p class="info"><strong>Calorías:</strong> {{ r.calorias }} kcal | <strong>Proteínas:</strong> {{ r.proteinas_g }}g | <strong>Carbos:</strong> {{ r.carbos_g }}g | <strong>Grasas:</strong> {{ r.grasas_g }}g</p>
+    </div>
+    {% endfor %}
+{% else %}
+    <p class="empty">Aún no has creado recetas.</p>
+{% endif %}
 {% endblock %}
