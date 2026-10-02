@@ -31,5 +31,7 @@
         <input type="hidden" name="next" value="{{ next }}">
         <button type="submit" class="btn btn-success login-submit">Entrar</button>
     </form>
+
+    <p class="auth-alt">¿No tienes cuenta? <a href="{% url 'registro:register' %}">Crear cuenta</a></p>
 </div>
 {% endblock %}

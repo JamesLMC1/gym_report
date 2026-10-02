@@ -46,6 +46,7 @@ INSTALLED_APPS = [
     'dietas.apps.DietasConfig',
     'chat.apps.ChatConfig',
     'accounts.apps.AccountsConfig',
+    'registro.apps.RegistroConfig',
 ]
 
 MIDDLEWARE = [
