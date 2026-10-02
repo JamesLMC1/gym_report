@@ -1,31 +1,31 @@
-{% extends "base.html" %}
+{% extends "base_authenticated.html" %}
 
-{% block title %}Gym - Todos los Sets{% endblock %}
+{% block title %}Ejercicios - Todos{% endblock %}
 
 {% block content %}
 <div class="page-head">
     <span class="eyebrow">Historial completo</span>
-    <h1>Todos los Sets</h1>
+    <h1>Todos los Ejercicios</h1>
 </div>
 
 <div class="toolbar">
     <a href="{% url 'gym:index' %}" class="btn">Volver</a>
 </div>
 
-{% if all_sets %}
+{% if ejercicios %}
     <div class="card-grid">
-    {% for s in all_sets %}
+    {% for e in ejercicios %}
     <div class="card">
-        <a href="{% url 'gym:detail' s.id %}">{{ s.nombre_ejercicio }}</a>
+        <a href="{% url 'gym:detail' e.id %}">{{ e.nombre }}</a>
+        <span class="badge">{{ e.grupo_muscular }}</span>
         <div class="chips">
-            <span class="chip">Peso <b>{{ s.peso }}kg</b></span>
-            <span class="chip">Reps <b>{{ s.repeticiones }}</b></span>
-            <span class="chip">Descanso <b>{{ s.tiempo_descanso }}s</b></span>
+            <span class="chip">Grupo <b>{{ e.grupo_muscular }}</b></span>
+            {% if e.dificultad %}<span class="chip">Nivel <b>{{ e.get_dificultad_display }}</b></span>{% endif %}
         </div>
     </div>
     {% endfor %}
     </div>
 {% else %}
-    <p class="empty">No hay registros de ejercicios aún.</p>
+    <p class="empty">No hay ejercicios registrados aún.</p>
 {% endif %}
 {% endblock %}

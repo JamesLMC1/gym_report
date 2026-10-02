@@ -1,0 +1,33 @@
+{% extends "base_authenticated.html" %}
+
+{% block title %}Catálogo de Rutinas{% endblock %}
+
+{% block content %}
+<div class="page-head">
+    <span class="eyebrow">Biblioteca</span>
+    <h1>Catálogo de Rutinas</h1>
+    <p class="lead">Rutinas del microservicio sincronizadas en la app.</p>
+</div>
+
+<div class="toolbar">
+    <a href="{% url 'workouts:index' %}" class="btn">Volver</a>
+    <a href="{% url 'workouts:create' %}" class="btn btn-success">+ Nueva Rutina</a>
+</div>
+
+{% if rutinas %}
+    <div class="card-grid">
+    {% for r in rutinas %}
+    <div class="card">
+        <a href="{% url 'workouts:detail' r.id %}">{{ r.nombre }}</a>
+        <div class="chips">
+            {% if r.nivel %}<span class="chip">Nivel <b>{{ r.get_nivel_display }}</b></span>{% endif %}
+            {% if r.duracion_dias %}<span class="chip">Duración <b>{{ r.duracion_dias }}d</b></span>{% endif %}
+        </div>
+        {% if r.descripcion %}<p class="info">{{ r.descripcion }}</p>{% endif %}
+    </div>
+    {% endfor %}
+    </div>
+{% else %}
+    <p class="empty">No se pudieron sincronizar rutinas del catálogo.</p>
+{% endif %}
+{% endblock %}

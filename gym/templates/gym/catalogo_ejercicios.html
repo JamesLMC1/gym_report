@@ -1,4 +1,4 @@
-{% extends "base.html" %}
+{% extends "base_authenticated.html" %}
 
 {% block title %}Catálogo de Ejercicios{% endblock %}
 
@@ -6,28 +6,25 @@
 <div class="page-head">
     <span class="eyebrow">Biblioteca</span>
     <h1>Catálogo de Ejercicios</h1>
-    <p class="lead">Elige un ejercicio para registrar una serie a partir de sus parámetros.</p>
+    <p class="lead">Ejercicios del microservicio sincronizados en la app.</p>
 </div>
 
 <div class="toolbar">
     <a href="{% url 'gym:index' %}" class="btn">Volver</a>
+    <a href="{% url 'gym:create' %}" class="btn btn-success">+ Nuevo Ejercicio</a>
 </div>
 
 {% if ejercicios %}
     <div class="card-grid">
     {% for e in ejercicios %}
     <div class="card">
-        <a href="{% url 'gym:crear_desde_ejercicio' e.id %}">{{ e.nombre }}</a>
+        <a href="{% url 'gym:detail' e.id %}">{{ e.nombre }}</a>
         <span class="badge">{{ e.grupo_muscular }}</span>
-        <p class="info"><strong>Grupo muscular:</strong> {{ e.grupo_muscular }}</p>
-        <p class="info"><strong>Dificultad:</strong> {{ e.dificultad }}</p>
-        {% if e.descripcion %}
-        <p class="info">{{ e.descripcion }}</p>
-        {% endif %}
+        {% if e.descripcion %}<p class="info">{{ e.descripcion }}</p>{% endif %}
     </div>
     {% endfor %}
     </div>
 {% else %}
-    <p class="empty">No se pudieron cargar los ejercicios del catálogo.</p>
+    <p class="empty">No se pudieron sincronizar ejercicios del catálogo.</p>
 {% endif %}
 {% endblock %}

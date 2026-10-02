@@ -1,0 +1,31 @@
+{% extends "base_authenticated.html" %}
+
+{% block title %}Rutinas - Todas{% endblock %}
+
+{% block content %}
+<div class="page-head">
+    <span class="eyebrow">Historial completo</span>
+    <h1>Todas las Rutinas</h1>
+</div>
+
+<div class="toolbar">
+    <a href="{% url 'workouts:index' %}" class="btn">Volver</a>
+</div>
+
+{% if rutinas %}
+    <div class="card-grid">
+    {% for r in rutinas %}
+    <div class="card">
+        <a href="{% url 'workouts:detail' r.id %}">{{ r.nombre }}</a>
+        <div class="chips">
+            {% if r.nivel %}<span class="chip">Nivel <b>{{ r.get_nivel_display }}</b></span>{% endif %}
+            {% if r.duracion_dias %}<span class="chip">Duración <b>{{ r.duracion_dias }}d</b></span>{% endif %}
+        </div>
+        {% if r.descripcion %}<p class="info">{{ r.descripcion }}</p>{% endif %}
+    </div>
+    {% endfor %}
+    </div>
+{% else %}
+    <p class="empty">No hay rutinas registradas aún.</p>
+{% endif %}
+{% endblock %}

@@ -1,0 +1,30 @@
+{% extends "base_authenticated.html" %}
+
+{% block title %}Catálogo de Comidas{% endblock %}
+
+{% block content %}
+<div class="page-head">
+    <span class="eyebrow">Biblioteca</span>
+    <h1>Catálogo de Comidas</h1>
+    <p class="lead">Comidas del microservicio sincronizadas en la app.</p>
+</div>
+
+<div class="toolbar">
+    <a href="{% url 'dietas:index' %}" class="btn">Volver</a>
+    <a href="{% url 'dietas:create' %}" class="btn btn-success">+ Nueva Comida</a>
+</div>
+
+{% if comidas %}
+    <div class="card-grid">
+    {% for c in comidas %}
+    <div class="card">
+        <a href="{% url 'dietas:detail' c.id %}">{{ c.nombre }}</a>
+        <span class="badge">{{ c.get_tipo_display }}</span>
+        {% if c.receta %}<p class="info">{{ c.receta|truncatechars:80 }}</p>{% endif %}
+    </div>
+    {% endfor %}
+    </div>
+{% else %}
+    <p class="empty">No se pudieron sincronizar comidas del catálogo.</p>
+{% endif %}
+{% endblock %}

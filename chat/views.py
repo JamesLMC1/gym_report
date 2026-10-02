@@ -4,6 +4,7 @@ import urllib.request
 from pathlib import Path
 
 from django.contrib import messages
+from django.contrib.auth.decorators import login_required
 from django.shortcuts import redirect, render
 
 from config.env import get_env
@@ -67,6 +68,7 @@ def _call_deepseek(question, history, session_id):
         return None, f"No se pudo conectar con el modelo: {e}"
 
 
+@login_required
 def index(request):
     if request.method == "POST":
         pregunta = request.POST.get("pregunta", "").strip()
@@ -90,6 +92,7 @@ def index(request):
     return render(request, "chat/index.html", {"mensajes": mensajes})
 
 
+@login_required
 def limpiar(request):
     if request.method == "POST":
         ChatMessage.objects.all().delete()

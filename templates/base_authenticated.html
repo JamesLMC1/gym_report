@@ -1,0 +1,28 @@
+{% extends "base.html" %}
+
+{% block body %}
+<nav>
+    <a href="{% url 'home' %}" class="brand">
+        <span class="dot"></span>Gym<span class="slash">//</span>Tracker
+    </a>
+    <div class="nav-links">
+        <a href="{% url 'home' %}" class="{% if request.resolver_match.url_name == 'home' %}active{% endif %}"><span class="num">00</span>Inicio</a>
+        <a href="{% url 'gym:index' %}" class="{% if request.resolver_match.app_name == 'gym' %}active{% endif %}"><span class="num">01</span>Ejercicios</a>
+        <a href="{% url 'workouts:index' %}" class="{% if request.resolver_match.app_name == 'workouts' %}active{% endif %}"><span class="num">02</span>Entrenamientos</a>
+        <a href="{% url 'dietas:index' %}" class="{% if request.resolver_match.app_name == 'dietas' %}active{% endif %}"><span class="num">03</span>Dietas</a>
+        <a href="{% url 'chat:index' %}" class="{% if request.resolver_match.app_name == 'chat' %}active{% endif %}"><span class="num">04</span>Chat Gym</a>
+    </div>
+    <div class="nav-user">
+        {% if request.user.is_staff %}<a href="{% url 'admin:index' %}" class="nav-admin">Admin</a>{% endif %}
+        <span class="nav-user-name">{{ request.user.username }}</span>
+        <form method="post" action="{% url 'accounts:logout' %}">
+            {% csrf_token %}
+            <button type="submit" class="nav-logout">Salir</button>
+        </form>
+    </div>
+</nav>
+<div class="container">
+    {% include "partials/messages.html" %}
+    {% block content %}{% endblock %}
+</div>
+{% endblock %}

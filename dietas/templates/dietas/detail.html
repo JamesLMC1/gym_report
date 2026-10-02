@@ -1,4 +1,4 @@
-{% extends "base.html" %}
+{% extends "base_authenticated.html" %}
 
 {% block title %}{{ comida.nombre }}{% endblock %}
 
@@ -10,19 +10,27 @@
 
 <div class="toolbar">
     <a href="{% url 'dietas:index' %}" class="btn">Volver</a>
+    <a href="{% url 'dietas:edit' comida.id %}" class="btn">Editar</a>
 </div>
 
 <div class="card">
-    <span class="badge">{{ comida.tipo }}</span>
-    <p class="info"><strong>Tipo:</strong> {{ comida.tipo }}</p>
-    <p class="info"><strong>Calorías:</strong> {{ comida.calorias }} kcal</p>
-    <p class="info"><strong>Proteínas:</strong> {{ comida.proteinas_g }}g</p>
-    <p class="info"><strong>Carbohidratos:</strong> {{ comida.carbos_g }}g</p>
-    <p class="info"><strong>Grasas:</strong> {{ comida.grasas_g }}g</p>
+    <span class="badge acid">{{ comida.get_tipo_display }}</span>
+    <p class="info"><strong>Tipo:</strong> {{ comida.get_tipo_display|default:"—" }}</p>
+    <p class="info"><strong>Calorías:</strong> {{ comida.calorias|default:"—" }} kcal</p>
+    <p class="info"><strong>Proteínas:</strong> {{ comida.proteinas_g|default:"—" }}g</p>
+    <p class="info"><strong>Carbohidratos:</strong> {{ comida.carbos_g|default:"—" }}g</p>
+    <p class="info"><strong>Grasas:</strong> {{ comida.grasas_g|default:"—" }}g</p>
     {% if comida.receta %}
     <hr class="divider" style="margin: 20px 0;">
     <span class="badge acid">Preparación</span>
-    <p>{{ comida.receta }}</p>
+    <div>{{ comida.receta|linebreaks }}</div>
     {% endif %}
 </div>
+
+<form method="post" action="{% url 'dietas:delete' comida.id %}">
+    {% csrf_token %}
+    <div class="actions">
+        <button type="submit" class="btn btn-danger" onclick="return confirm('¿Eliminar esta comida del microservicio?')">Eliminar</button>
+    </div>
+</form>
 {% endblock %}

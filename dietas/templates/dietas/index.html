@@ -1,60 +1,36 @@
-{% extends "base.html" %}
+{% extends "base_authenticated.html" %}
 
-{% block title %}Dietas - Comidas{% endblock %}
+{% block title %}Dietas{% endblock %}
 
 {% block content %}
 <div class="page-head">
-    <span class="eyebrow">Paso 04 / Nutrición</span>
-    <h1>Comidas Disponibles</h1>
-    <p class="lead">Macros a la vista: elige comidas que encajen con tu objetivo.</p>
-</div>
-
-{% if comidas %}
-    <div class="card-grid">
-    {% for c in comidas %}
-    <div class="card">
-        <a href="{% url 'dietas:detail' c.id %}">{{ c.nombre }}</a>
-        <span class="badge">{{ c.tipo }}</span>
-        <div class="chips">
-            <span class="chip">Calorías <b>{{ c.calorias }}</b></span>
-            <span class="chip">Prote <b>{{ c.proteinas_g }}g</b></span>
-            <span class="chip">Carbos <b>{{ c.carbos_g }}g</b></span>
-            <span class="chip">Grasas <b>{{ c.grasas_g }}g</b></span>
-        </div>
-    </div>
-    {% endfor %}
-    </div>
-{% else %}
-    <p class="empty">No se pudieron cargar las comidas.</p>
-{% endif %}
-
-<hr class="divider">
-
-<div class="page-head">
-    <span class="eyebrow">Recetario</span>
-    <h1>Mis Recetas</h1>
+    <span class="eyebrow">Dietas / Microservicio</span>
+    <h1>Últimas Comidas</h1>
+    <p class="lead">Comidas del microservicio. Al crear, editar o eliminar se refleja en el microservicio.</p>
 </div>
 
 <div class="toolbar">
-    <a href="{% url 'dietas:receta_create' %}" class="btn btn-success">+ Nueva</a>
+    <a href="{% url 'dietas:catalogo' %}" class="btn btn-success">+ Desde Catálogo</a>
+    <a href="{% url 'dietas:create' %}" class="btn">+ Manual</a>
+    <a href="{% url 'dietas:all' %}" class="btn">Ver todas</a>
 </div>
 
-{% if recetas %}
+{% if latest %}
     <div class="card-grid">
-    {% for r in recetas %}
+    {% for c in latest %}
     <div class="card">
-        <a href="{% url 'dietas:receta_detail' r.id %}">{{ r.nombre }}</a>
-        <span class="badge acid">{{ r.get_tipo_display }}</span>
+        <a href="{% url 'dietas:detail' c.id %}">{{ c.nombre }}</a>
+        <span class="badge acid">{{ c.get_tipo_display }}</span>
         <div class="chips">
-            <span class="chip">Calorías <b>{{ r.calorias }}</b></span>
-            <span class="chip">Prote <b>{{ r.proteinas_g }}g</b></span>
-            <span class="chip">Carbos <b>{{ r.carbos_g }}g</b></span>
-            <span class="chip">Grasas <b>{{ r.grasas_g }}g</b></span>
+            <span class="chip">Calorías <b>{{ c.calorias|default:"—" }}</b></span>
+            <span class="chip">Prote <b>{{ c.proteinas_g|default:"—" }}g</b></span>
+            <span class="chip">Carbos <b>{{ c.carbos_g|default:"—" }}g</b></span>
+            <span class="chip">Grasas <b>{{ c.grasas_g|default:"—" }}g</b></span>
         </div>
     </div>
     {% endfor %}
     </div>
 {% else %}
-    <p class="empty">Aún no has creado recetas.</p>
+    <p class="empty">No hay comidas registradas aún.</p>
 {% endif %}
 {% endblock %}

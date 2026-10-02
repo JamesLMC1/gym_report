@@ -1,17 +1,37 @@
 from pathlib import Path
 
-from config.env import load_env
+import dj_database_url
+
+from config.env import get_env, load_env
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 load_env()
 
 
-SECRET_KEY = 'django-insecure-d*363e5^9)gxoqttzpljd)1itqj9m=w8&m&6k87*tgokvm0k$@'
+def _split_env(name, default=''):
+    raw = get_env(name, default)
+    return [item.strip() for item in raw.split(',') if item.strip()]
 
-DEBUG = True
 
-ALLOWED_HOSTS = ['*']
+SECRET_KEY = get_env(
+    'SECRET_KEY',
+    'django-insecure-d*363e5^9)gxoqttzpljd)1itqj9m=w8&m&6k87*tgokvm0k$@',
+)
+
+DEBUG = get_env('DEBUG', 'True').lower() in ('1', 'true', 'yes', 'on')
+
+ALLOWED_HOSTS = _split_env('ALLOWED_HOSTS', 'localhost,127.0.0.1')
+
+_vercel_url = get_env('VERCEL_URL')
+if _vercel_url and _vercel_url not in ALLOWED_HOSTS:
+    ALLOWED_HOSTS.append(_vercel_url)
+
+CSRF_TRUSTED_ORIGINS = _split_env('CSRF_TRUSTED_ORIGINS')
+if _vercel_url:
+    _origin = f'https://{_vercel_url}'
+    if _origin not in CSRF_TRUSTED_ORIGINS:
+        CSRF_TRUSTED_ORIGINS.append(_origin)
 
 INSTALLED_APPS = [
     'django.contrib.admin',
@@ -25,10 +45,12 @@ INSTALLED_APPS = [
     'usuarios.apps.UsuariosConfig',
     'dietas.apps.DietasConfig',
     'chat.apps.ChatConfig',
+    'accounts.apps.AccountsConfig',
 ]
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
+    'whitenoise.middleware.WhiteNoiseMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
@@ -49,7 +71,6 @@ TEMPLATES = [
                 'django.template.context_processors.request',
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
-                'config.context_processors.flow_status',
             ],
         },
     },
@@ -57,12 +78,24 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'config.wsgi.application'
 
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+DATABASE_URL = get_env('DATABASE_URL')
+if DATABASE_URL:
+    DATABASES = {
+        'default': dj_database_url.parse(
+            DATABASE_URL,
+            conn_max_age=600,
+            conn_health_checks=True,
+            ssl_require=True,
+        )
     }
-}
+    DATABASES['default'].setdefault('DISABLE_SERVER_SIDE_CURSORS', True)
+else:
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.sqlite3',
+            'NAME': BASE_DIR / 'db.sqlite3',
+        }
+    }
 
 AUTH_PASSWORD_VALIDATORS = [
     {'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator'},
@@ -77,4 +110,33 @@ USE_I18N = True
 USE_TZ = True
 STATIC_URL = 'static/'
 STATICFILES_DIRS = [BASE_DIR / 'static']
+STATIC_ROOT = BASE_DIR / 'staticfiles'
+
+STORAGES = {
+    'default': {
+        'BACKEND': 'django.core.files.storage.FileSystemStorage',
+    },
+    'staticfiles': {
+        'BACKEND': 'whitenoise.storage.CompressedStaticFilesStorage',
+    },
+}
+
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+LOGIN_URL = 'accounts:login'
+LOGIN_REDIRECT_URL = 'home'
+LOGOUT_REDIRECT_URL = 'accounts:login'
+
+LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': False,
+    'formatters': {
+        'simple': {'format': '[{levelname}] {asctime} {name}: {message}', 'style': '{'},
+    },
+    'handlers': {
+        'console': {'class': 'logging.StreamHandler', 'formatter': 'simple'},
+    },
+    'loggers': {
+        'config.api_service': {'handlers': ['console'], 'level': 'INFO', 'propagate': False},
+    },
+}

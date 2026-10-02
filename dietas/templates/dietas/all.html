@@ -1,0 +1,33 @@
+{% extends "base_authenticated.html" %}
+
+{% block title %}Dietas - Todas{% endblock %}
+
+{% block content %}
+<div class="page-head">
+    <span class="eyebrow">Historial completo</span>
+    <h1>Todas las Comidas</h1>
+</div>
+
+<div class="toolbar">
+    <a href="{% url 'dietas:index' %}" class="btn">Volver</a>
+</div>
+
+{% if comidas %}
+    <div class="card-grid">
+    {% for c in comidas %}
+    <div class="card">
+        <a href="{% url 'dietas:detail' c.id %}">{{ c.nombre }}</a>
+        <span class="badge acid">{{ c.get_tipo_display }}</span>
+        <div class="chips">
+            <span class="chip">Calorías <b>{{ c.calorias|default:"—" }}</b></span>
+            <span class="chip">Prote <b>{{ c.proteinas_g|default:"—" }}g</b></span>
+            <span class="chip">Carbos <b>{{ c.carbos_g|default:"—" }}g</b></span>
+            <span class="chip">Grasas <b>{{ c.grasas_g|default:"—" }}g</b></span>
+        </div>
+    </div>
+    {% endfor %}
+    </div>
+{% else %}
+    <p class="empty">No hay comidas registradas aún.</p>
+{% endif %}
+{% endblock %}

@@ -1,31 +1,34 @@
-{% extends "base.html" %}
+{% extends "base_authenticated.html" %}
 
-{% block title %}Entrenamientos{% endblock %}
+{% block title %}Rutinas{% endblock %}
 
 {% block content %}
 <div class="page-head">
-    <span class="eyebrow">Paso 03 / Sesiones</span>
-    <h1>Últimos Entrenamientos</h1>
-    <p class="lead">El historial de cada sesión: fecha, duración y notas.</p>
+    <span class="eyebrow">Entrenamientos / Microservicio</span>
+    <h1>Últimas Rutinas</h1>
+    <p class="lead">Rutinas del microservicio. Al crear, editar o eliminar se refleja en el microservicio.</p>
 </div>
 
 <div class="toolbar">
-    <a href="{% url 'workouts:create' %}" class="btn btn-success">+ Nuevo Entrenamiento</a>
+    <a href="{% url 'workouts:catalogo' %}" class="btn btn-success">+ Desde Catálogo</a>
+    <a href="{% url 'workouts:create' %}" class="btn">+ Manual</a>
+    <a href="{% url 'workouts:all' %}" class="btn">Ver todas</a>
 </div>
 
 {% if latest %}
     <div class="card-grid">
-    {% for w in latest %}
+    {% for r in latest %}
     <div class="card">
-        <a href="{% url 'workouts:detail' w.id %}">Entrenamiento del {{ w.fecha }}</a>
+        <a href="{% url 'workouts:detail' r.id %}">{{ r.nombre }}</a>
         <div class="chips">
-            <span class="chip">Duración <b>{{ w.duracion }} min</b></span>
+            {% if r.nivel %}<span class="chip">Nivel <b>{{ r.get_nivel_display }}</b></span>{% endif %}
+            {% if r.duracion_dias %}<span class="chip">Duración <b>{{ r.duracion_dias }}d</b></span>{% endif %}
         </div>
-        <p class="info">{{ w.notas|default:"Sin notas" }}</p>
+        {% if r.descripcion %}<p class="info">{{ r.descripcion }}</p>{% endif %}
     </div>
     {% endfor %}
     </div>
 {% else %}
-    <p class="empty">No hay entrenamientos registrados aún.</p>
+    <p class="empty">No hay rutinas registradas aún.</p>
 {% endif %}
 {% endblock %}

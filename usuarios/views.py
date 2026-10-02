@@ -1,14 +1,17 @@
+from django.contrib.auth.decorators import login_required
 from django.http import Http404
 from django.shortcuts import render, redirect
 from .models import Usuario
 from .forms import UsuarioForm
 
 
+@login_required
 def index(request):
     latest = Usuario.objects.all()[:5]
     return render(request, "usuarios/index.html", {"latest": latest})
 
 
+@login_required
 def detail(request, usuario_id):
     try:
         usuario = Usuario.objects.get(pk=usuario_id)
@@ -17,6 +20,7 @@ def detail(request, usuario_id):
     return render(request, "usuarios/detail.html", {"usuario": usuario})
 
 
+@login_required
 def create(request):
     if request.method == "POST":
         form = UsuarioForm(request.POST)
@@ -28,6 +32,7 @@ def create(request):
     return render(request, "usuarios/form.html", {"form": form, "titulo": "Registrar Usuario"})
 
 
+@login_required
 def edit(request, usuario_id):
     try:
         usuario = Usuario.objects.get(pk=usuario_id)
@@ -44,6 +49,7 @@ def edit(request, usuario_id):
     return render(request, "usuarios/form.html", {"form": form, "titulo": "Editar Usuario"})
 
 
+@login_required
 def delete(request, usuario_id):
     try:
         usuario = Usuario.objects.get(pk=usuario_id)

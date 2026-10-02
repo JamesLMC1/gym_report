@@ -1,4 +1,4 @@
-{% extends "base.html" %}
+{% extends "base_authenticated.html" %}
 
 {% block title %}Chat - Asistente de Gym{% endblock %}
 
@@ -8,12 +8,6 @@
     <h1>Asistente de Gym</h1>
     <p class="lead">Pregunta sobre ejercicios, rutinas, técnica o nutrición. Tu coach siempre disponible.</p>
 </div>
-
-{% if messages %}
-    {% for message in messages %}
-    <div class="chat-error">{{ message }}</div>
-    {% endfor %}
-{% endif %}
 
 <div class="chat-box" id="chat-box">
     {% if mensajes %}

@@ -1,29 +1,50 @@
-{% extends "base.html" %}
+{% extends "base_authenticated.html" %}
 
-{% block title %}Entrenamiento del {{ workout.fecha }}{% endblock %}
+{% block title %}{{ rutina.nombre }}{% endblock %}
 
 {% block content %}
 <div class="page-head">
-    <span class="eyebrow">Sesión</span>
-    <h1>Entrenamiento del {{ workout.fecha }}</h1>
+    <span class="eyebrow">Rutina</span>
+    <h1>{{ rutina.nombre }}</h1>
 </div>
 
 <div class="toolbar">
     <a href="{% url 'workouts:index' %}" class="btn">Volver</a>
-    <a href="{% url 'workouts:edit' workout.id %}" class="btn">Editar</a>
+    <a href="{% url 'workouts:edit' rutina.id %}" class="btn">Editar</a>
 </div>
 
 <div class="card">
     <span class="badge acid">Resumen</span>
-    <p class="info"><strong>Fecha:</strong> {{ workout.fecha }}</p>
-    <p class="info"><strong>Duración:</strong> {{ workout.duracion }} minutos</p>
-    <p class="info"><strong>Notas:</strong> {{ workout.notas|default:"Sin notas" }}</p>
+    <div class="chips">
+        {% if rutina.nivel %}<span class="chip">Nivel <b>{{ rutina.get_nivel_display }}</b></span>{% endif %}
+        {% if rutina.duracion_dias %}<span class="chip">Duración <b>{{ rutina.duracion_dias }}d</b></span>{% endif %}
+    </div>
+    {% if rutina.descripcion %}<p class="info" style="margin-top:14px;">{{ rutina.descripcion }}</p>{% endif %}
 </div>
 
-<form method="post" action="{% url 'workouts:delete' workout.id %}">
+{% if items %}
+<h2>Ejercicios de la Rutina</h2>
+<div class="card-grid">
+{% for re in items %}
+<div class="card">
+    <a href="{% url 'gym:detail' re.ejercicio.id %}">{{ re.ejercicio.nombre }}</a>
+    <span class="badge acid">{{ re.ejercicio.grupo_muscular }}</span>
+    <div class="chips">
+        {% if re.series %}<span class="chip">Series <b>{{ re.series }}</b></span>{% endif %}
+        {% if re.repeticiones %}<span class="chip">Reps <b>{{ re.repeticiones }}</b></span>{% endif %}
+        {% if re.descanso_segundos %}<span class="chip">Descanso <b>{{ re.descanso_segundos }}s</b></span>{% endif %}
+    </div>
+</div>
+{% endfor %}
+</div>
+{% else %}
+<p class="empty">Esta rutina no tiene ejercicios asignados.</p>
+{% endif %}
+
+<form method="post" action="{% url 'workouts:delete' rutina.id %}">
     {% csrf_token %}
     <div class="actions">
-        <button type="submit" class="btn btn-danger" onclick="return confirm('¿Eliminar este entrenamiento?')">Eliminar</button>
+        <button type="submit" class="btn btn-danger" onclick="return confirm('¿Eliminar esta rutina del microservicio?')">Eliminar</button>
     </div>
 </form>
 {% endblock %}

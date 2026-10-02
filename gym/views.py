@@ -1,131 +1,128 @@
+from django.contrib import messages
+from django.contrib.auth.decorators import login_required
 from django.http import Http404
-from django.shortcuts import render, redirect
-from .models import Set
-from .forms import SetForm
-from config.api_service import get_ejercicios, get_ejercicio, get_rutinas, get_rutina
+from django.shortcuts import redirect, render
+
+from config import api_service
+from .forms import EjercicioForm
+from .models import Ejercicio
+
+CAMPOS = ('nombre', 'grupo_muscular', 'descripcion', 'dificultad', 'imagen_url')
 
 
+def _body(form):
+    return {campo: form.cleaned_data.get(campo) for campo in CAMPOS}
+
+
+def sincronizar_ejercicio(item):
+    """Inserta/actualiza en la BD local un ejercicio del microservicio."""
+    if not item or not item.get('id'):
+        return None
+    obj, _ = Ejercicio.objects.update_or_create(
+        id=item['id'],
+        defaults={
+            'nombre': item.get('nombre') or '',
+            'grupo_muscular': item.get('grupo_muscular') or '',
+            'descripcion': item.get('descripcion') or '',
+            'dificultad': item.get('dificultad') or '',
+            'imagen_url': item.get('imagen_url') or '',
+            'created_at': item.get('created_at'),
+        },
+    )
+    return obj
+
+
+@login_required
 def index(request):
-    from usuarios.models import Usuario
-    if not Usuario.objects.exists():
-        return render(request, "gym/bloqueado.html", {"mensaje": "Primero debes registrar un usuario"})
-
-    latest_set_list = Set.objects.all()[:5]
-    return render(request, "gym/index.html", {"latest_set_list": latest_set_list})
+    latest = Ejercicio.objects.all()[:5]
+    return render(request, 'gym/index.html', {'latest': latest})
 
 
+@login_required
 def all(request):
-    from usuarios.models import Usuario
-    if not Usuario.objects.exists():
-        return render(request, "gym/bloqueado.html", {"mensaje": "Primero debes registrar un usuario"})
-
-    all_sets = Set.objects.all()
-    return render(request, "gym/all.html", {"all_sets": all_sets})
+    ejercicios = Ejercicio.objects.all()
+    return render(request, 'gym/all.html', {'ejercicios': ejercicios})
 
 
-def detail(request, set_id):
+@login_required
+def detail(request, ejercicio_id):
     try:
-        set_obj = Set.objects.get(pk=set_id)
-    except Set.DoesNotExist:
-        raise Http404("El set no existe")
-    return render(request, "gym/detail.html", {"set_obj": set_obj})
+        ejercicio = Ejercicio.objects.get(pk=ejercicio_id)
+    except Ejercicio.DoesNotExist:
+        raise Http404('El ejercicio no existe')
+    return render(request, 'gym/detail.html', {'ejercicio': ejercicio})
 
 
-def by_exercise(request, exercise_name):
-    sets = Set.objects.filter(nombre_ejercicio__icontains=exercise_name)
-    return render(request, "gym/by_exercise.html", {"sets": sets, "exercise_name": exercise_name})
-
-
-def crear_desde_catalogo(request):
-    from usuarios.models import Usuario
-    if not Usuario.objects.exists():
-        return render(request, "gym/bloqueado.html", {"mensaje": "Primero debes registrar un usuario"})
-
-    ejercicios = get_ejercicios()
-    return render(request, "gym/catalogo_ejercicios.html", {"ejercicios": ejercicios})
-
-
-def crear_set_desde_ejercicio(request, ejercicio_id):
-    from usuarios.models import Usuario
-    if not Usuario.objects.exists():
-        return render(request, "gym/bloqueado.html", {"mensaje": "Primero debes registrar un usuario"})
-
-    ejercicio = get_ejercicio(ejercicio_id)
-    if not ejercicio:
-        raise Http404("Ejercicio no encontrado en el catálogo")
-
-    if request.method == "POST":
-        form = SetForm(request.POST)
-        if form.is_valid():
-            form.save()
-            return redirect("gym:index")
+@login_required
+def catalogo(request):
+    items = api_service.get_ejercicios()
+    if items:
+        for item in items:
+            sincronizar_ejercicio(item)
+        messages.success(request, f'Catálogo sincronizado: {len(items)} ejercicios del microservicio.')
     else:
-        form = SetForm(initial={"nombre_ejercicio": ejercicio["nombre"]})
-    return render(request, "gym/form.html", {
-        "form": form,
-        "titulo": f"Registrar Set: {ejercicio['nombre']}",
-        "ejercicio": ejercicio,
-    })
+        messages.error(request, 'No se pudo cargar el catálogo de ejercicios.')
+    ejercicios = Ejercicio.objects.all()
+    return render(request, 'gym/catalogo_ejercicios.html', {'ejercicios': ejercicios})
 
 
+@login_required
 def create(request):
-    from usuarios.models import Usuario
-    if not Usuario.objects.exists():
-        return render(request, "gym/bloqueado.html", {"mensaje": "Primero debes registrar un usuario"})
-
-    if request.method == "POST":
-        form = SetForm(request.POST)
+    if request.method == 'POST':
+        form = EjercicioForm(request.POST)
         if form.is_valid():
-            form.save()
-            return redirect("gym:index")
+            creado, error = api_service.crear_ejercicio(_body(form))
+            if error:
+                messages.error(request, error)
+            elif not creado:
+                messages.error(request, 'El microservicio no devolvió el ejercicio creado.')
+            else:
+                sincronizar_ejercicio(creado)
+                messages.success(request, 'Ejercicio creado y sincronizado.')
+                return redirect('gym:index')
     else:
-        form = SetForm()
-    return render(request, "gym/form.html", {"form": form, "titulo": "Registrar Set"})
+        form = EjercicioForm()
+    return render(request, 'gym/form.html', {'form': form, 'titulo': 'Registrar Ejercicio'})
 
 
-def edit(request, set_id):
+@login_required
+def edit(request, ejercicio_id):
     try:
-        set_obj = Set.objects.get(pk=set_id)
-    except Set.DoesNotExist:
-        raise Http404("El set no existe")
+        ejercicio = Ejercicio.objects.get(pk=ejercicio_id)
+    except Ejercicio.DoesNotExist:
+        raise Http404('El ejercicio no existe')
 
-    if request.method == "POST":
-        form = SetForm(request.POST, instance=set_obj)
+    if request.method == 'POST':
+        form = EjercicioForm(request.POST, instance=ejercicio)
         if form.is_valid():
-            form.save()
-            return redirect("gym:detail", set_id=set_obj.id)
+            actualizado, error = api_service.actualizar_ejercicio(ejercicio_id, _body(form))
+            if error:
+                messages.error(request, error)
+            else:
+                if actualizado:
+                    sincronizar_ejercicio(actualizado)
+                else:
+                    form.save()
+                messages.success(request, 'Ejercicio actualizado en el microservicio.')
+                return redirect('gym:detail', ejercicio_id=ejercicio.id)
     else:
-        form = SetForm(instance=set_obj)
-    return render(request, "gym/form.html", {"form": form, "titulo": "Editar Set"})
+        form = EjercicioForm(instance=ejercicio)
+    return render(request, 'gym/form.html', {'form': form, 'titulo': 'Editar Ejercicio'})
 
 
-def delete(request, set_id):
+@login_required
+def delete(request, ejercicio_id):
     try:
-        set_obj = Set.objects.get(pk=set_id)
-    except Set.DoesNotExist:
-        raise Http404("El set no existe")
+        ejercicio = Ejercicio.objects.get(pk=ejercicio_id)
+    except Ejercicio.DoesNotExist:
+        raise Http404('El ejercicio no existe')
 
-    if request.method == "POST":
-        set_obj.delete()
-        return redirect("gym:index")
-    return render(request, "gym/delete.html", {"set_obj": set_obj})
-
-
-def rutinas(request):
-    from usuarios.models import Usuario
-    if not Usuario.objects.exists():
-        return render(request, "gym/bloqueado.html", {"mensaje": "Primero debes registrar un usuario"})
-
-    rutinas = get_rutinas()
-    return render(request, "gym/rutinas.html", {"rutinas": rutinas})
-
-
-def rutina_detail(request, rutina_id):
-    from usuarios.models import Usuario
-    if not Usuario.objects.exists():
-        return render(request, "gym/bloqueado.html", {"mensaje": "Primero debes registrar un usuario"})
-
-    rutina = get_rutina(rutina_id)
-    if not rutina:
-        raise Http404("Rutina no encontrada")
-    return render(request, "gym/rutina_detail.html", {"rutina": rutina})
+    if request.method == 'POST':
+        _, error = api_service.eliminar_ejercicio(ejercicio_id)
+        if error:
+            messages.error(request, error)
+        else:
+            ejercicio.delete()
+            messages.success(request, 'Ejercicio eliminado del microservicio.')
+            return redirect('gym:index')
+    return render(request, 'gym/delete.html', {'ejercicio': ejercicio})

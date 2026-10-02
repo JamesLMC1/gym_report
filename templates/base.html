@@ -10,24 +10,14 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Anton&family=JetBrains+Mono:wght@400;500;600&family=Sora:wght@400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="{% static 'css/styles.css' %}">
+    {% block extra_head %}{% endblock %}
 </head>
 <body>
-    <nav>
-        <a href="{% url 'usuarios:index' %}" class="brand">
-            <span class="dot"></span>Gym<span class="slash">//</span>Tracker
-        </a>
-        <div class="nav-links">
-            <a href="{% url 'usuarios:index' %}" class="{% if request.resolver_match.app_name == 'usuarios' %}active{% endif %}"><span class="num">01</span>Usuarios {% if tiene_usuarios %}<span class="nav-check">&#10003;</span>{% endif %}</a>
-            <a href="{% url 'gym:index' %}" class="{% if request.resolver_match.app_name == 'gym' %}active{% endif %}"><span class="num">02</span>Gym {% if tiene_ejercicios %}<span class="nav-check">&#10003;</span>{% elif not tiene_usuarios %}<span class="nav-lock">&#128274;</span>{% endif %}</a>
-            <a href="{% url 'workouts:index' %}" class="{% if request.resolver_match.app_name == 'workouts' %}active{% endif %}"><span class="num">03</span>Entrenamientos {% if not tiene_ejercicios and tiene_usuarios %}<span class="nav-lock">&#128274;</span>{% elif tiene_ejercicios %}<span class="nav-check">&#10003;</span>{% endif %}</a>
-            <a href="{% url 'dietas:index' %}" class="{% if request.resolver_match.app_name == 'dietas' %}active{% endif %}"><span class="num">04</span>Dietas</a>
-            <a href="{% url 'chat:index' %}" class="{% if request.resolver_match.app_name == 'chat' %}active{% endif %}"><span class="num">05</span>Chat Gym</a>
-        </div>
-        <a href="{% url 'admin:index' %}" class="nav-admin">Admin</a>
-    </nav>
+    {% block body %}
     <div class="container">
         {% block content %}{% endblock %}
     </div>
+    {% endblock %}
     <footer class="footer">
         Entrena <b>//</b> Registra <b>//</b> Evoluciona
     </footer>

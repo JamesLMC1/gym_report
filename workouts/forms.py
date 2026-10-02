@@ -1,13 +1,14 @@
 from django import forms
-from .models import Workout
+from .models import Rutina
 
 
-class WorkoutForm(forms.ModelForm):
+class RutinaForm(forms.ModelForm):
     class Meta:
-        model = Workout
-        fields = ['fecha', 'duracion', 'notas']
+        model = Rutina
+        fields = ['nombre', 'descripcion', 'nivel', 'duracion_dias']
         widgets = {
-            'fecha': forms.DateInput(attrs={'class': 'form-input', 'type': 'date'}),
-            'duracion': forms.NumberInput(attrs={'class': 'form-input'}),
-            'notas': forms.Textarea(attrs={'class': 'form-input', 'rows': 3}),
+            'nombre': forms.TextInput(attrs={'class': 'form-input'}),
+            'descripcion': forms.Textarea(attrs={'class': 'form-input', 'rows': 4}),
+            'nivel': forms.Select(attrs={'class': 'form-input'}),
+            'duracion_dias': forms.NumberInput(attrs={'class': 'form-input'}),
         }

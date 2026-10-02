@@ -1,0 +1,24 @@
+{% extends "base_authenticated.html" %}
+
+{% block title %}Inicio - Gym Tracker{% endblock %}
+
+{% block content %}
+<div class="page-head">
+    <span class="eyebrow">Inicio / Bienvenida</span>
+    <h1>Hola, {{ request.user.username }}</h1>
+    <p class="lead">Bienvenido a Gym Tracker, tu espacio para entrenar con orden y constancia.</p>
+</div>
+
+<div class="card welcome">
+    <span class="badge acid">Bienvenido</span>
+    <p>
+        Aquí puedes gestionar tus <strong>ejercicios</strong> y <strong>rutinas</strong> de gimnasio,
+        organizar tus <strong>entrenamientos</strong> y llevar el control de tus <strong>dietas</strong>,
+        todo desde un mismo lugar.
+    </p>
+    <p>
+        Además, cuentas con un <strong>asistente personal</strong> que te responde dudas sobre técnica,
+        ejercicios, rutinas y nutrición para acompañarte en cada sesión.
+    </p>
+</div>
+{% endblock %}

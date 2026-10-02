@@ -1,29 +1,32 @@
-{% extends "base.html" %}
+{% extends "base_authenticated.html" %}
 
-{% block title %}{{ set_obj.nombre_ejercicio }}{% endblock %}
+{% block title %}{{ ejercicio.nombre }}{% endblock %}
 
 {% block content %}
 <div class="page-head">
-    <span class="eyebrow">Serie registrada</span>
-    <h1>{{ set_obj.nombre_ejercicio }}</h1>
+    <span class="eyebrow">Ejercicio</span>
+    <h1>{{ ejercicio.nombre }}</h1>
 </div>
 
 <div class="toolbar">
     <a href="{% url 'gym:index' %}" class="btn">Volver</a>
-    <a href="{% url 'gym:edit' set_obj.id %}" class="btn">Editar</a>
+    <a href="{% url 'gym:edit' ejercicio.id %}" class="btn">Editar</a>
 </div>
 
 <div class="card">
-    <span class="badge acid">Métricas</span>
-    <p class="info"><strong>Peso:</strong> {{ set_obj.peso }}kg</p>
-    <p class="info"><strong>Repeticiones:</strong> {{ set_obj.repeticiones }}</p>
-    <p class="info"><strong>Descanso:</strong> {{ set_obj.tiempo_descanso }} segundos</p>
+    <span class="badge acid">Ficha</span>
+    <p class="info"><strong>Grupo muscular:</strong> {{ ejercicio.grupo_muscular }}</p>
+    <p class="info"><strong>Dificultad:</strong> {{ ejercicio.get_dificultad_display|default:"—" }}</p>
+    <p class="info"><strong>Descripción:</strong> {{ ejercicio.descripcion|default:"Sin descripción" }}</p>
+    {% if ejercicio.imagen_url %}
+    <p class="info"><strong>Imagen:</strong> <a href="{{ ejercicio.imagen_url }}" target="_blank" rel="noopener">{{ ejercicio.imagen_url }}</a></p>
+    {% endif %}
 </div>
 
-<form method="post" action="{% url 'gym:delete' set_obj.id %}">
+<form method="post" action="{% url 'gym:delete' ejercicio.id %}">
     {% csrf_token %}
     <div class="actions">
-        <button type="submit" class="btn btn-danger" onclick="return confirm('¿Eliminar este set?')">Eliminar</button>
+        <button type="submit" class="btn btn-danger" onclick="return confirm('¿Eliminar este ejercicio del microservicio?')">Eliminar</button>
     </div>
 </form>
 {% endblock %}

@@ -1,10 +1,10 @@
 from django import forms
-from .models import Receta
+from .models import Comida
 
 
-class RecetaForm(forms.ModelForm):
+class ComidaForm(forms.ModelForm):
     class Meta:
-        model = Receta
+        model = Comida
         fields = ['nombre', 'tipo', 'calorias', 'proteinas_g', 'carbos_g', 'grasas_g', 'receta']
         widgets = {
             'nombre': forms.TextInput(attrs={'class': 'form-input'}),

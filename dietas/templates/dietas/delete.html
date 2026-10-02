@@ -1,25 +1,24 @@
-{% extends "base.html" %}
+{% extends "base_authenticated.html" %}
 
-{% block title %}Eliminar Receta{% endblock %}
+{% block title %}Eliminar {{ comida.nombre }}{% endblock %}
 
 {% block content %}
 <div class="page-head">
     <span class="eyebrow">Zona de riesgo</span>
-    <h1>Eliminar Receta</h1>
+    <h1>Eliminar Comida</h1>
 </div>
 
 <div class="toolbar">
-    <a href="{% url 'dietas:index' %}" class="btn">Volver</a>
+    <a href="{% url 'dietas:detail' comida.id %}" class="btn">Volver</a>
 </div>
 
 <div class="card warning">
-    <p class="warn-msg">Esta acción no se puede deshacer.</p>
-    <p>¿Estás seguro de que deseas eliminar la receta <strong>{{ receta.nombre }}</strong>?</p>
+    <p class="warn-msg">Esta acción elimina el registro en el microservicio y no se puede deshacer.</p>
+    <p>¿Estás seguro de que quieres eliminar <strong>{{ comida.nombre }}</strong>?</p>
     <form method="post">
         {% csrf_token %}
         <div class="actions">
             <button type="submit" class="btn btn-danger">Eliminar</button>
-            <a href="{% url 'dietas:receta_detail' receta.id %}" class="btn">Cancelar</a>
         </div>
     </form>
 </div>
