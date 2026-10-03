@@ -22,46 +22,29 @@
         Entrena <b>//</b> Registra <b>//</b> Evoluciona
     </footer>
 
-    <div id="micro-overlay" class="micro-overlay" hidden aria-live="polite" aria-busy="true">
-        <div class="micro-box">
-            <div class="micro-spinner" aria-hidden="true"></div>
-            <p class="micro-title">Conectando al microservicio&hellip;</p>
-            <p class="micro-target" id="micro-target">Node (Express)</p>
-        </div>
+    <div id="micro-bar" class="micro-bar" hidden aria-hidden="true">
+        <div class="micro-bar-fill"></div>
     </div>
+    <span id="micro-bar-text" class="micro-bar-text" hidden aria-live="polite">Conectando&hellip;</span>
 
-    {{ microservicios|json_script:"micro-data" }}
     <script>
     (function () {
-        var dataEl = document.getElementById('micro-data');
-        var overlay = document.getElementById('micro-overlay');
-        var target = document.getElementById('micro-target');
-        if (!overlay) return;
-
-        var names = ['Node (Express)'];
-        if (dataEl) {
-            try {
-                var list = JSON.parse(dataEl.textContent) || [];
-                if (list.length) names = list.map(function (m) { return m.label; });
-            } catch (e) {}
-        }
-
-        var timer = null;
-        var index = 0;
+        var bar = document.getElementById('micro-bar');
+        var label = document.getElementById('micro-bar-text');
+        if (!bar) return;
 
         function isMicroAction(url) {
-            return /\/catalogo\/|\/create\/|\/edit\/|\/delete\//.test(url || '');
+            return /\/catalogo\/|\/crear\/|\/editar\/|\/eliminar\//.test(url || '');
         }
 
         function show() {
-            overlay.hidden = false;
-            index = 0;
-            if (target) target.textContent = names[0];
-            if (timer) clearInterval(timer);
-            timer = setInterval(function () {
-                index = (index + 1) % names.length;
-                if (target) target.textContent = names[index];
-            }, 1300);
+            bar.hidden = false;
+            if (label) label.hidden = false;
+        }
+
+        function hide() {
+            bar.hidden = true;
+            if (label) label.hidden = true;
         }
 
         document.addEventListener('click', function (e) {
@@ -77,10 +60,7 @@
             if (isMicroAction(action)) show();
         });
 
-        window.addEventListener('pageshow', function () {
-            if (timer) { clearInterval(timer); timer = null; }
-            overlay.hidden = true;
-        });
+        window.addEventListener('pageshow', hide);
     })();
     </script>
 </body>
