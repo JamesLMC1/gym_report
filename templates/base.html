@@ -22,29 +22,25 @@
         Entrena <b>//</b> Registra <b>//</b> Evoluciona
     </footer>
 
-    <div id="micro-bar" class="micro-bar" hidden aria-hidden="true">
-        <div class="micro-bar-fill"></div>
+    <div id="micro-banner" class="micro-banner" hidden aria-live="polite">
+        Conectando al microservicio&hellip;
     </div>
-    <span id="micro-bar-text" class="micro-bar-text" hidden aria-live="polite">Conectando&hellip;</span>
 
     <script>
     (function () {
-        var bar = document.getElementById('micro-bar');
-        var label = document.getElementById('micro-bar-text');
-        if (!bar) return;
+        var banner = document.getElementById('micro-banner');
+        if (!banner) return;
 
         function isMicroAction(url) {
             return /\/catalogo\/|\/crear\/|\/editar\/|\/eliminar\//.test(url || '');
         }
 
         function show() {
-            bar.hidden = false;
-            if (label) label.hidden = false;
+            banner.hidden = false;
         }
 
         function hide() {
-            bar.hidden = true;
-            if (label) label.hidden = true;
+            banner.hidden = true;
         }
 
         document.addEventListener('click', function (e) {
