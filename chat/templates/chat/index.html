@@ -21,21 +21,61 @@
     {% endif %}
 </div>
 
-<form class="chat-form" method="post" action="{% url 'chat:index' %}">
+<form class="chat-form" method="post" action="{% url 'chat:index' %}" id="chat-form">
     {% csrf_token %}
     <input type="text" name="pregunta" placeholder="Ej: ¿Cómo hago una sentadilla correcta?" autocomplete="off" required>
-    <button type="submit" class="btn btn-success">Enviar</button>
+    <button type="submit" class="btn btn-success" id="chat-submit">Enviar</button>
 </form>
 
 {% if mensajes %}
-<form method="post" action="{% url 'chat:limpiar' %}" style="margin-top: 12px;">
+<form method="post" action="{% url 'chat:limpiar' %}" id="chat-clear" style="margin-top: 12px;">
     {% csrf_token %}
     <button type="submit" class="btn btn-danger">Limpiar conversación</button>
 </form>
 {% endif %}
 
 <script>
-    const box = document.getElementById('chat-box');
-    box.scrollTop = box.scrollHeight;
+    var box = document.getElementById('chat-box');
+    if (box) box.scrollTop = box.scrollHeight;
+
+    (function () {
+        var form = document.getElementById('chat-form');
+        if (!form) return;
+        form.addEventListener('submit', function (e) {
+            var btn = document.getElementById('chat-submit');
+            var input = form.querySelector('input[name="pregunta"]');
+            if (!input.value.trim() || (btn && btn.disabled)) {
+                e.preventDefault();
+                return;
+            }
+            if (btn) {
+                btn.disabled = true;
+                btn.textContent = 'Enviando…';
+            }
+            input.readOnly = true;
+
+            if (box) {
+                var vacio = box.querySelector('.chat-empty');
+                if (vacio) vacio.remove();
+                var pend = document.createElement('div');
+                pend.className = 'msg assistant';
+                pend.innerHTML = '<div class="bubble typing"><span></span><span></span><span></span></div>';
+                box.appendChild(pend);
+                box.scrollTop = box.scrollHeight;
+            }
+        });
+    })();
+
+    (function () {
+        var clear = document.getElementById('chat-clear');
+        if (!clear) return;
+        clear.addEventListener('submit', function () {
+            var btn = clear.querySelector('button[type="submit"]');
+            if (btn) {
+                btn.disabled = true;
+                btn.textContent = 'Limpiando…';
+            }
+        });
+    })();
 </script>
 {% endblock %}
