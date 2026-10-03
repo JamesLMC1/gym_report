@@ -23,10 +23,10 @@
     {% endif %}
 </div>
 
-<form method="post" action="{% url 'gym:delete' ejercicio.id %}">
+<form method="post" action="{% url 'gym:delete' ejercicio.id %}" data-confirm="¿Eliminar «{{ ejercicio.nombre }}»? Se quitará de tu lista y se intentará borrar del microservicio.">
     {% csrf_token %}
     <div class="actions">
-        <button type="submit" class="btn btn-danger" onclick="return confirm('¿Eliminar este ejercicio del microservicio?')">Eliminar</button>
+        <button type="submit" class="btn btn-danger">Eliminar</button>
     </div>
 </form>
 {% endblock %}

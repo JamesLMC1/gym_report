@@ -27,10 +27,10 @@
     {% endif %}
 </div>
 
-<form method="post" action="{% url 'dietas:delete' comida.id %}">
+<form method="post" action="{% url 'dietas:delete' comida.id %}" data-confirm="¿Eliminar «{{ comida.nombre }}»? Se quitará de tu lista y se intentará borrar del microservicio.">
     {% csrf_token %}
     <div class="actions">
-        <button type="submit" class="btn btn-danger" onclick="return confirm('¿Eliminar esta comida del microservicio?')">Eliminar</button>
+        <button type="submit" class="btn btn-danger">Eliminar</button>
     </div>
 </form>
 {% endblock %}

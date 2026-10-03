@@ -41,10 +41,10 @@
 <p class="empty">Esta rutina no tiene ejercicios asignados.</p>
 {% endif %}
 
-<form method="post" action="{% url 'workouts:delete' rutina.id %}">
+<form method="post" action="{% url 'workouts:delete' rutina.id %}" data-confirm="¿Eliminar «{{ rutina.nombre }}»? Se quitará de tu lista y se intentará borrar del microservicio.">
     {% csrf_token %}
     <div class="actions">
-        <button type="submit" class="btn btn-danger" onclick="return confirm('¿Eliminar esta rutina del microservicio?')">Eliminar</button>
+        <button type="submit" class="btn btn-danger">Eliminar</button>
     </div>
 </form>
 {% endblock %}

@@ -26,37 +26,79 @@
         Conectando al microservicio&hellip;
     </div>
 
+    <div id="confirm-modal" class="confirm-overlay" hidden>
+        <div class="confirm-box" role="dialog" aria-modal="true" aria-labelledby="confirm-title">
+            <h3 id="confirm-title" class="confirm-title">Confirmar</h3>
+            <p id="confirm-msg" class="confirm-msg"></p>
+            <div class="confirm-actions">
+                <button type="button" class="btn" data-confirm-cancel>Cancelar</button>
+                <button type="button" class="btn btn-danger" data-confirm-ok>Aceptar</button>
+            </div>
+        </div>
+    </div>
+
     <script>
     (function () {
         var banner = document.getElementById('micro-banner');
         if (!banner) return;
 
-        function isMicroAction(url) {
-            return /\/catalogo\/|\/crear\/|\/editar\/|\/eliminar\//.test(url || '');
-        }
+        function show() { banner.hidden = false; }
+        function hide() { banner.hidden = true; }
+        window.showMicroBanner = show;
 
-        function show() {
-            banner.hidden = false;
-        }
-
-        function hide() {
-            banner.hidden = true;
-        }
+        function isCatalog(url) { return /\/catalogo\//.test(url || ''); }
+        function isMicroPost(url) { return /\/crear\/|\/editar\/|\/eliminar\//.test(url || ''); }
 
         document.addEventListener('click', function (e) {
             var a = e.target.closest ? e.target.closest('a[href]') : null;
             if (!a || a.target === '_blank' || a.hasAttribute('download')) return;
-            if (isMicroAction(a.getAttribute('href'))) show();
+            if (isCatalog(a.getAttribute('href'))) show();
         });
 
         document.addEventListener('submit', function (e) {
             var form = e.target;
             if ((form.method || 'get').toLowerCase() !== 'post') return;
+            if (form.hasAttribute('data-confirm')) return;
             var action = form.getAttribute('action') || window.location.pathname;
-            if (isMicroAction(action)) show();
+            if (isMicroPost(action)) show();
         });
 
         window.addEventListener('pageshow', hide);
+    })();
+
+    (function () {
+        var modal = document.getElementById('confirm-modal');
+        if (!modal) return;
+        var msgEl = document.getElementById('confirm-msg');
+        var pending = null;
+
+        function close() { modal.hidden = true; pending = null; }
+
+        document.addEventListener('submit', function (e) {
+            var form = e.target;
+            if (!form.hasAttribute('data-confirm') || form.dataset.confirmed === '1') return;
+            e.preventDefault();
+            pending = form;
+            msgEl.textContent = form.getAttribute('data-confirm');
+            modal.hidden = false;
+        });
+
+        modal.addEventListener('click', function (e) {
+            if (e.target === modal || e.target.hasAttribute('data-confirm-cancel')) { close(); return; }
+            if (e.target.hasAttribute('data-confirm-ok')) {
+                var form = pending;
+                close();
+                if (form) {
+                    form.dataset.confirmed = '1';
+                    if (window.showMicroBanner) window.showMicroBanner();
+                    form.submit();
+                }
+            }
+        });
+
+        document.addEventListener('keydown', function (e) {
+            if (e.key === 'Escape' && !modal.hidden) close();
+        });
     })();
     </script>
 </body>

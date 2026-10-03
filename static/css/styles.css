@@ -786,7 +786,7 @@ h1 mark, h2 mark { background: none; color: var(--acid); }
 /* ---------------- Conexion a microservicios (aviso tipo mensaje) ---------------- */
 .micro-banner {
     position: fixed;
-    top: 16px;
+    top: 84px;
     left: 50%;
     transform: translateX(-50%);
     z-index: 10000;
@@ -801,6 +801,54 @@ h1 mark, h2 mark { background: none; color: var(--acid); }
     text-align: center;
 }
 .micro-banner[hidden] { display: none; }
+
+/* ---------------- Modal de confirmacion ---------------- */
+.confirm-overlay {
+    position: fixed;
+    inset: 0;
+    z-index: 10002;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 24px;
+    background: rgba(12, 13, 15, 0.72);
+    backdrop-filter: blur(3px);
+}
+.confirm-overlay[hidden] { display: none; }
+.confirm-box {
+    width: min(430px, 100%);
+    background: linear-gradient(180deg, var(--panel), var(--panel-2));
+    border: 1px solid var(--line);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow);
+    padding: 26px 24px 20px;
+    position: relative;
+    overflow: hidden;
+}
+.confirm-box::before {
+    content: "";
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 3px;
+    background: linear-gradient(90deg, var(--danger), transparent 85%);
+}
+.confirm-title {
+    font-family: var(--font-display);
+    font-size: 1.45rem;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    margin-bottom: 8px;
+}
+.confirm-msg {
+    color: var(--text-dim);
+    font-size: 0.92rem;
+    margin-bottom: 22px;
+}
+.confirm-actions {
+    display: flex;
+    gap: 10px;
+    justify-content: flex-end;
+}
 
 /* ---------------- Accessibility helpers ---------------- */
 :focus-visible { outline: 2px solid var(--acid); outline-offset: 2px; }

@@ -13,7 +13,7 @@
 </div>
 
 <div class="card warning">
-    <p class="warn-msg">Esta acción elimina el registro en el microservicio y no se puede deshacer.</p>
+    <p class="warn-msg">Se eliminará de tu lista y, si el microservicio responde, también de allí. No se puede deshacer.</p>
     <p>¿Estás seguro de que quieres eliminar <strong>{{ rutina.nombre }}</strong>?</p>
     <form method="post">
         {% csrf_token %}
