@@ -104,7 +104,7 @@ def catalogo(request):
     if items:
         for item in items:
             sincronizar_rutina(item)
-        messages.success(request, f'Catálogo sincronizado: {len(items)} rutinas del microservicio.')
+        messages.success(request, f'Catálogo sincronizado: {len(items)} rutinas desde {api_service.etiqueta_conexion()}.')
     else:
         messages.error(request, 'No se pudo cargar el catálogo de rutinas.')
     rutinas = Rutina.objects.all()
@@ -123,7 +123,7 @@ def create(request):
                 messages.error(request, 'El microservicio no devolvió la rutina creada.')
             else:
                 sincronizar_rutina(creado)
-                messages.success(request, 'Rutina creada y sincronizada.')
+                messages.success(request, f'Rutina creada y sincronizada en {api_service.etiqueta_conexion()}.')
                 return redirect('workouts:index')
     else:
         form = RutinaForm()
@@ -148,7 +148,7 @@ def edit(request, rutina_id):
                     sincronizar_rutina(actualizado)
                 else:
                     form.save()
-                messages.success(request, 'Rutina actualizada en el microservicio.')
+                messages.success(request, f'Rutina actualizada en {api_service.etiqueta_conexion()}.')
                 return redirect('workouts:detail', rutina_id=rutina.id)
     else:
         form = RutinaForm(instance=rutina)
@@ -168,6 +168,6 @@ def delete(request, rutina_id):
             messages.error(request, error)
         else:
             rutina.delete()
-            messages.success(request, 'Rutina eliminada del microservicio.')
+            messages.success(request, f'Rutina eliminada de {api_service.etiqueta_conexion()}.')
             return redirect('workouts:index')
     return render(request, 'workouts/delete.html', {'rutina': rutina})

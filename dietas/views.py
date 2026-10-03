@@ -60,7 +60,7 @@ def catalogo(request):
     if items:
         for item in items:
             sincronizar_comida(item)
-        messages.success(request, f'Catálogo sincronizado: {len(items)} comidas del microservicio.')
+        messages.success(request, f'Catálogo sincronizado: {len(items)} comidas desde {api_service.etiqueta_conexion()}.')
     else:
         messages.error(request, 'No se pudo cargar el catálogo de comidas.')
     comidas = Comida.objects.all()
@@ -79,7 +79,7 @@ def create(request):
                 messages.error(request, 'El microservicio no devolvió la comida creada.')
             else:
                 sincronizar_comida(creado)
-                messages.success(request, 'Comida creada y sincronizada.')
+                messages.success(request, f'Comida creada y sincronizada en {api_service.etiqueta_conexion()}.')
                 return redirect('dietas:index')
     else:
         form = ComidaForm()
@@ -104,7 +104,7 @@ def edit(request, comida_id):
                     sincronizar_comida(actualizado)
                 else:
                     form.save()
-                messages.success(request, 'Comida actualizada en el microservicio.')
+                messages.success(request, f'Comida actualizada en {api_service.etiqueta_conexion()}.')
                 return redirect('dietas:detail', comida_id=comida.id)
     else:
         form = ComidaForm(instance=comida)
@@ -124,6 +124,6 @@ def delete(request, comida_id):
             messages.error(request, error)
         else:
             comida.delete()
-            messages.success(request, 'Comida eliminada del microservicio.')
+            messages.success(request, f'Comida eliminada de {api_service.etiqueta_conexion()}.')
             return redirect('dietas:index')
     return render(request, 'dietas/delete.html', {'comida': comida})

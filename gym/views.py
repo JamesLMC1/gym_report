@@ -59,7 +59,7 @@ def catalogo(request):
     if items:
         for item in items:
             sincronizar_ejercicio(item)
-        messages.success(request, f'Catálogo sincronizado: {len(items)} ejercicios del microservicio.')
+        messages.success(request, f'Catálogo sincronizado: {len(items)} ejercicios desde {api_service.etiqueta_conexion()}.')
     else:
         messages.error(request, 'No se pudo cargar el catálogo de ejercicios.')
     ejercicios = Ejercicio.objects.all()
@@ -78,7 +78,7 @@ def create(request):
                 messages.error(request, 'El microservicio no devolvió el ejercicio creado.')
             else:
                 sincronizar_ejercicio(creado)
-                messages.success(request, 'Ejercicio creado y sincronizado.')
+                messages.success(request, f'Ejercicio creado y sincronizado en {api_service.etiqueta_conexion()}.')
                 return redirect('gym:index')
     else:
         form = EjercicioForm()
@@ -103,7 +103,7 @@ def edit(request, ejercicio_id):
                     sincronizar_ejercicio(actualizado)
                 else:
                     form.save()
-                messages.success(request, 'Ejercicio actualizado en el microservicio.')
+                messages.success(request, f'Ejercicio actualizado en {api_service.etiqueta_conexion()}.')
                 return redirect('gym:detail', ejercicio_id=ejercicio.id)
     else:
         form = EjercicioForm(instance=ejercicio)
@@ -123,6 +123,6 @@ def delete(request, ejercicio_id):
             messages.error(request, error)
         else:
             ejercicio.delete()
-            messages.success(request, 'Ejercicio eliminado del microservicio.')
+            messages.success(request, f'Ejercicio eliminado de {api_service.etiqueta_conexion()}.')
             return redirect('gym:index')
     return render(request, 'gym/delete.html', {'ejercicio': ejercicio})

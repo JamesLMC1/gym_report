@@ -1,5 +1,6 @@
 import json
 import logging
+import threading
 import time
 import urllib.error
 import urllib.request
@@ -15,6 +16,45 @@ COOLDOWN = float(get_env("MICROSERVICE_COOLDOWN", "30") or 30)
 
 # Circuit breaker simple: {base_url: timestamp_hasta_el_que_se_omite}
 _failed_until = {}
+
+# Última conexión por hilo (para saber qué microservicio respondió)
+_local = threading.local()
+
+
+def _label(base):
+    """Etiqueta legible del microservicio según su URL."""
+    host = base.replace("https://", "").replace("http://", "").strip("/")
+    if "micro-python" in host:
+        return "Python (FastAPI)"
+    if "micro-java" in host:
+        return "Java (Spring Boot)"
+    if "micro-go" in host:
+        return "Go"
+    if "microserviciogym" in host:
+        return "Node (Express)"
+    return host
+
+
+def microservicios():
+    """Lista de microservicios configurados (primario + respaldos)."""
+    return [
+        {"url": base, "label": _label(base), "primario": index == 0}
+        for index, base in enumerate(_bases())
+    ]
+
+
+def ultima_conexion():
+    """Info del último microservicio contactado en este hilo."""
+    return {
+        "url": getattr(_local, "url", None),
+        "label": getattr(_local, "label", None),
+        "ok": getattr(_local, "ok", False),
+    }
+
+
+def etiqueta_conexion():
+    """Etiqueta del microservicio que respondió, o 'microservicio' si falló."""
+    return getattr(_local, "label", None) or "microservicio"
 
 
 def _bases():
@@ -64,10 +104,17 @@ def _request(method, path, data=None):
     candidatas = [b for b in bases if _failed_until.get(b, 0) <= now] or bases
     last_error = "Ningún microservicio respondió."
 
+    _local.url = None
+    _local.label = None
+    _local.ok = False
+
     for base in candidatas:
         try:
             result = _do_request(base, method, path, payload)
             _failed_until.pop(base, None)
+            _local.url = base
+            _local.label = _label(base)
+            _local.ok = True
             logger.info("Microservicio %s respondió %s %s.", base, method, path)
             return result, None
         except urllib.error.HTTPError as e:
