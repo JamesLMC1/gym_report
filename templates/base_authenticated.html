@@ -2,15 +2,13 @@
 
 {% block body %}
 <nav>
-    <a href="{% url 'home' %}" class="brand">
-        <span class="dot"></span>Gym<span class="slash">//</span>Tracker
-    </a>
+    <a href="{% url 'home' %}" class="brand">Gym Tracker</a>
     <div class="nav-links">
-        <a href="{% url 'home' %}" class="{% if request.resolver_match.url_name == 'home' %}active{% endif %}"><span class="num">00</span>Inicio</a>
-        <a href="{% url 'gym:index' %}" class="{% if request.resolver_match.app_name == 'gym' %}active{% endif %}"><span class="num">01</span>Ejercicios</a>
-        <a href="{% url 'workouts:index' %}" class="{% if request.resolver_match.app_name == 'workouts' %}active{% endif %}"><span class="num">02</span>Entrenamientos</a>
-        <a href="{% url 'dietas:index' %}" class="{% if request.resolver_match.app_name == 'dietas' %}active{% endif %}"><span class="num">03</span>Dietas</a>
-        <a href="{% url 'chat:index' %}" class="{% if request.resolver_match.app_name == 'chat' %}active{% endif %}"><span class="num">04</span>Chat Gym</a>
+        <a href="{% url 'home' %}" class="{% if request.resolver_match.url_name == 'home' %}active{% endif %}">Inicio</a>
+        <a href="{% url 'gym:index' %}" class="{% if request.resolver_match.app_name == 'gym' %}active{% endif %}">Ejercicios</a>
+        <a href="{% url 'workouts:index' %}" class="{% if request.resolver_match.app_name == 'workouts' %}active{% endif %}">Entrenamientos</a>
+        <a href="{% url 'dietas:index' %}" class="{% if request.resolver_match.app_name == 'dietas' %}active{% endif %}">Dietas</a>
+        <a href="{% url 'chat:index' %}" class="{% if request.resolver_match.app_name == 'chat' %}active{% endif %}">Chat</a>
     </div>
     <div class="nav-user">
         {% if request.user.is_staff %}<a href="{% url 'admin:index' %}" class="nav-admin">Admin</a>{% endif %}
