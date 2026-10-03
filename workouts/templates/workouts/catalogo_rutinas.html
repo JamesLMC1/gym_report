@@ -4,9 +4,9 @@
 
 {% block content %}
 <div class="page-head">
-    <span class="eyebrow">Biblioteca</span>
+    <span class="eyebrow">Biblioteca / Microservicio</span>
     <h1>Catálogo de Rutinas</h1>
-    <p class="lead">Rutinas del microservicio sincronizadas en la app.</p>
+    <p class="lead">Rutinas en vivo desde el microservicio. Pulsa <b>Guardar</b> para añadirlas a tu lista.</p>
 </div>
 
 <div class="toolbar">
@@ -18,9 +18,18 @@
     <div class="card-grid">
     {% for r in rutinas %}
     <div class="card">
-        <a href="{% url 'workouts:detail' r.id %}">{{ r.nombre }}</a>
+        {% if r.guardado %}
+            <a href="{% url 'workouts:detail' r.id %}">{{ r.nombre }}</a>
+            <span class="badge acid">Guardado</span>
+        {% else %}
+            <span class="card-title">{{ r.nombre }}</span>
+            <form method="post" action="{% url 'workouts:guardar' r.id %}" class="card-action">
+                {% csrf_token %}
+                <button type="submit" class="btn btn-success">Guardar</button>
+            </form>
+        {% endif %}
         <div class="chips">
-            {% if r.nivel %}<span class="chip">Nivel <b>{{ r.get_nivel_display }}</b></span>{% endif %}
+            {% if r.nivel %}<span class="chip">Nivel <b>{{ r.nivel|capfirst }}</b></span>{% endif %}
             {% if r.duracion_dias %}<span class="chip">Duración <b>{{ r.duracion_dias }}d</b></span>{% endif %}
         </div>
         {% if r.descripcion %}<p class="info">{{ r.descripcion }}</p>{% endif %}
@@ -28,6 +37,6 @@
     {% endfor %}
     </div>
 {% else %}
-    <p class="empty">No se pudieron sincronizar rutinas del catálogo.</p>
+    <p class="empty">No se pudo cargar el catálogo de rutinas (microservicio no disponible).</p>
 {% endif %}
 {% endblock %}

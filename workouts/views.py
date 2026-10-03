@@ -2,6 +2,7 @@ from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.http import Http404
 from django.shortcuts import redirect, render
+from django.views.decorators.http import require_POST
 
 from config import api_service
 from gym.models import Ejercicio
@@ -89,26 +90,39 @@ def detail(request, rutina_id):
     except Rutina.DoesNotExist:
         raise Http404('La rutina no existe')
 
-    detalle = api_service.get_rutina(rutina_id)
-    if detalle:
-        sincronizar_detalle(detalle)
-        rutina.refresh_from_db()
-
     items = rutina.items.select_related('ejercicio')
     return render(request, 'workouts/detail.html', {'rutina': rutina, 'items': items})
 
 
 @login_required
 def catalogo(request):
+    """Muestra el catálogo en vivo del microservicio (sin guardar nada)."""
     items = api_service.get_rutinas()
     if items:
+        guardados = {str(pk) for pk in Rutina.objects.values_list('id', flat=True)}
         for item in items:
-            sincronizar_rutina(item)
-        messages.success(request, f'Catálogo sincronizado: {len(items)} rutinas desde {api_service.etiqueta_conexion()}.')
+            item['guardado'] = str(item.get('id')) in guardados
+        messages.success(
+            request,
+            f'Catálogo cargado: {len(items)} rutinas desde {api_service.etiqueta_conexion()}. '
+            f'Usa "Guardar" para añadirlas a tu lista.',
+        )
     else:
-        messages.error(request, 'No se pudo cargar el catálogo de rutinas.')
-    rutinas = Rutina.objects.all()
-    return render(request, 'workouts/catalogo_rutinas.html', {'rutinas': rutinas})
+        messages.error(request, 'No se pudo cargar el catálogo de rutinas desde el microservicio.')
+    return render(request, 'workouts/catalogo_rutinas.html', {'rutinas': items or []})
+
+
+@login_required
+@require_POST
+def guardar(request, rutina_id):
+    """Guarda en la BD local una rutina (con sus ejercicios) traída del catálogo."""
+    detalle = api_service.get_rutina(rutina_id)
+    if not detalle:
+        messages.error(request, 'No se pudo obtener la rutina del microservicio para guardarla.')
+    else:
+        sincronizar_detalle(detalle)
+        messages.success(request, f'Rutina guardada en tu lista desde {api_service.etiqueta_conexion()}.')
+    return redirect('workouts:catalogo')
 
 
 @login_required

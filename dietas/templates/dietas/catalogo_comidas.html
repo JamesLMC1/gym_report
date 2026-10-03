@@ -4,9 +4,9 @@
 
 {% block content %}
 <div class="page-head">
-    <span class="eyebrow">Biblioteca</span>
+    <span class="eyebrow">Biblioteca / Microservicio</span>
     <h1>Catálogo de Comidas</h1>
-    <p class="lead">Comidas del microservicio sincronizadas en la app.</p>
+    <p class="lead">Comidas en vivo desde el microservicio. Pulsa <b>Guardar</b> para añadirlas a tu lista.</p>
 </div>
 
 <div class="toolbar">
@@ -18,13 +18,22 @@
     <div class="card-grid">
     {% for c in comidas %}
     <div class="card">
-        <a href="{% url 'dietas:detail' c.id %}">{{ c.nombre }}</a>
-        <span class="badge">{{ c.get_tipo_display }}</span>
+        {% if c.guardado %}
+            <a href="{% url 'dietas:detail' c.id %}">{{ c.nombre }}</a>
+            <span class="badge acid">Guardado</span>
+        {% else %}
+            <span class="card-title">{{ c.nombre }}</span>
+            <form method="post" action="{% url 'dietas:guardar' c.id %}" class="card-action">
+                {% csrf_token %}
+                <button type="submit" class="btn btn-success">Guardar</button>
+            </form>
+        {% endif %}
+        <span class="badge">{{ c.tipo|capfirst }}</span>
         {% if c.receta %}<p class="info">{{ c.receta|truncatechars:80 }}</p>{% endif %}
     </div>
     {% endfor %}
     </div>
 {% else %}
-    <p class="empty">No se pudieron sincronizar comidas del catálogo.</p>
+    <p class="empty">No se pudo cargar el catálogo de comidas (microservicio no disponible).</p>
 {% endif %}
 {% endblock %}

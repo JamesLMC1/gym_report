@@ -2,6 +2,7 @@ from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.http import Http404
 from django.shortcuts import redirect, render
+from django.views.decorators.http import require_POST
 
 from config import api_service
 from .forms import ComidaForm
@@ -56,15 +57,33 @@ def detail(request, comida_id):
 
 @login_required
 def catalogo(request):
+    """Muestra el catálogo en vivo del microservicio (sin guardar nada)."""
     items = api_service.get_comidas()
     if items:
+        guardados = {str(pk) for pk in Comida.objects.values_list('id', flat=True)}
         for item in items:
-            sincronizar_comida(item)
-        messages.success(request, f'Catálogo sincronizado: {len(items)} comidas desde {api_service.etiqueta_conexion()}.')
+            item['guardado'] = str(item.get('id')) in guardados
+        messages.success(
+            request,
+            f'Catálogo cargado: {len(items)} comidas desde {api_service.etiqueta_conexion()}. '
+            f'Usa "Guardar" para añadirlas a tu lista.',
+        )
     else:
-        messages.error(request, 'No se pudo cargar el catálogo de comidas.')
-    comidas = Comida.objects.all()
-    return render(request, 'dietas/catalogo_comidas.html', {'comidas': comidas})
+        messages.error(request, 'No se pudo cargar el catálogo de comidas desde el microservicio.')
+    return render(request, 'dietas/catalogo_comidas.html', {'comidas': items or []})
+
+
+@login_required
+@require_POST
+def guardar(request, comida_id):
+    """Guarda en la BD local una comida traída del catálogo."""
+    item = api_service.get_comida(comida_id)
+    if not item:
+        messages.error(request, 'No se pudo obtener la comida del microservicio para guardarla.')
+    else:
+        sincronizar_comida(item)
+        messages.success(request, f'Comida guardada en tu lista desde {api_service.etiqueta_conexion()}.')
+    return redirect('dietas:catalogo')
 
 
 @login_required

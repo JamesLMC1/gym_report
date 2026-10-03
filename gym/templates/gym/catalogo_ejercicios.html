@@ -4,9 +4,9 @@
 
 {% block content %}
 <div class="page-head">
-    <span class="eyebrow">Biblioteca</span>
+    <span class="eyebrow">Biblioteca / Microservicio</span>
     <h1>Catálogo de Ejercicios</h1>
-    <p class="lead">Ejercicios del microservicio sincronizados en la app.</p>
+    <p class="lead">Ejercicios en vivo desde el microservicio. Pulsa <b>Guardar</b> para añadirlos a tu lista.</p>
 </div>
 
 <div class="toolbar">
@@ -18,13 +18,22 @@
     <div class="card-grid">
     {% for e in ejercicios %}
     <div class="card">
-        <a href="{% url 'gym:detail' e.id %}">{{ e.nombre }}</a>
+        {% if e.guardado %}
+            <a href="{% url 'gym:detail' e.id %}">{{ e.nombre }}</a>
+            <span class="badge acid">Guardado</span>
+        {% else %}
+            <span class="card-title">{{ e.nombre }}</span>
+            <form method="post" action="{% url 'gym:guardar' e.id %}" class="card-action">
+                {% csrf_token %}
+                <button type="submit" class="btn btn-success">Guardar</button>
+            </form>
+        {% endif %}
         <span class="badge">{{ e.grupo_muscular }}</span>
         {% if e.descripcion %}<p class="info">{{ e.descripcion }}</p>{% endif %}
     </div>
     {% endfor %}
     </div>
 {% else %}
-    <p class="empty">No se pudieron sincronizar ejercicios del catálogo.</p>
+    <p class="empty">No se pudo cargar el catálogo de ejercicios (microservicio no disponible).</p>
 {% endif %}
 {% endblock %}

@@ -340,6 +340,10 @@ h1 mark, h2 mark { background: none; color: var(--acid); }
 /* data numbers pop with mono */
 .card .info { font-family: var(--font-mono); font-size: 0.82rem; letter-spacing: -0.01em; }
 
+/* accion de guardar dentro de las tarjetas del catalogo */
+.card-action { margin: 12px 0 6px; }
+.card-action .btn { font-size: 0.8rem; padding: 8px 16px; }
+
 .empty {
     color: var(--muted);
     font-style: normal;
