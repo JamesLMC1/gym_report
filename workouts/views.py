@@ -88,18 +88,21 @@ def sincronizar_detalle(item):
 
 @login_required
 def index(request):
+    """Página principal: muestra las últimas 5 rutinas registradas."""
     latest = Rutina.objects.all()[:5]
     return render(request, 'workouts/index.html', {'latest': latest})
 
 
 @login_required
 def all(request):
+    """Lista todas las rutinas guardadas en la base de datos local."""
     rutinas = Rutina.objects.all()
     return render(request, 'workouts/all.html', {'rutinas': rutinas})
 
 
 @login_required
 def detail(request, rutina_id):
+    """Muestra una rutina con sus ejercicios; lanza 404 si no existe."""
     try:
         rutina = Rutina.objects.get(pk=rutina_id)
     except Rutina.DoesNotExist:
@@ -142,6 +145,7 @@ def guardar(request, rutina_id):
 
 @login_required
 def create(request):
+    """Registra una rutina: la crea en el microservicio y/o en la BD local."""
     if request.method == 'POST':
         form = RutinaForm(request.POST)
         if form.is_valid():
@@ -161,6 +165,7 @@ def create(request):
 
 @login_required
 def edit(request, rutina_id):
+    """Edita una rutina existente en el microservicio y/o en la BD local."""
     try:
         rutina = Rutina.objects.get(pk=rutina_id)
     except Rutina.DoesNotExist:
@@ -185,6 +190,7 @@ def edit(request, rutina_id):
 
 @login_required
 def delete(request, rutina_id):
+    """Confirma y elimina una rutina del microservicio y de la BD local."""
     try:
         rutina = Rutina.objects.get(pk=rutina_id)
     except Rutina.DoesNotExist:

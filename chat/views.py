@@ -70,6 +70,7 @@ def _call_deepseek(question, history, session_id):
 
 @login_required
 def index(request):
+    """Muestra el chat; en POST envía la pregunta al modelo y guarda el diálogo."""
     if request.method == "POST":
         pregunta = request.POST.get("pregunta", "").strip()
         if not pregunta:
@@ -94,6 +95,7 @@ def index(request):
 
 @login_required
 def limpiar(request):
+    """Borra todo el historial de mensajes del chat."""
     if request.method == "POST":
         ChatMessage.objects.all().delete()
     return redirect("chat:index")

@@ -3,4 +3,5 @@ from django.views.generic import TemplateView
 
 
 class HomeView(LoginRequiredMixin, TemplateView):
+    """Página de inicio; solo accesible para usuarios autenticados."""
     template_name = "home.html"

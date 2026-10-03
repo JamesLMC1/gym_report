@@ -29,7 +29,6 @@ def _actualizar_local(ejercicio, datos):
     ejercicio.save()
     return ejercicio
 
-
 def sincronizar_ejercicio(item):
     """Inserta/actualiza en la BD local un ejercicio del microservicio."""
     if not item or not item.get('id'):
@@ -50,18 +49,21 @@ def sincronizar_ejercicio(item):
 
 @login_required
 def index(request):
+    """Página principal: muestra los últimos 5 ejercicios registrados."""
     latest = Ejercicio.objects.all()[:5]
     return render(request, 'gym/index.html', {'latest': latest})
 
 
 @login_required
 def all(request):
+    """Lista todos los ejercicios guardados en la base de datos local."""
     ejercicios = Ejercicio.objects.all()
     return render(request, 'gym/all.html', {'ejercicios': ejercicios})
 
 
 @login_required
 def detail(request, ejercicio_id):
+    """Muestra el detalle de un ejercicio; lanza 404 si no existe."""
     try:
         ejercicio = Ejercicio.objects.get(pk=ejercicio_id)
     except Ejercicio.DoesNotExist:
@@ -102,6 +104,7 @@ def guardar(request, ejercicio_id):
 
 @login_required
 def create(request):
+    """Registra un ejercicio: lo crea en el microservicio y/o en la BD local."""
     if request.method == 'POST':
         form = EjercicioForm(request.POST)
         if form.is_valid():
@@ -121,6 +124,7 @@ def create(request):
 
 @login_required
 def edit(request, ejercicio_id):
+    """Edita un ejercicio existente en el microservicio y/o en la BD local."""
     try:
         ejercicio = Ejercicio.objects.get(pk=ejercicio_id)
     except Ejercicio.DoesNotExist:
@@ -145,6 +149,7 @@ def edit(request, ejercicio_id):
 
 @login_required
 def delete(request, ejercicio_id):
+    """Confirma y elimina un ejercicio del microservicio y de la BD local."""
     try:
         ejercicio = Ejercicio.objects.get(pk=ejercicio_id)
     except Ejercicio.DoesNotExist:

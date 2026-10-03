@@ -51,18 +51,21 @@ def sincronizar_comida(item):
 
 @login_required
 def index(request):
+    """Página principal: muestra las últimas 5 comidas registradas."""
     latest = Comida.objects.all()[:5]
     return render(request, 'dietas/index.html', {'latest': latest})
 
 
 @login_required
 def all(request):
+    """Lista todas las comidas guardadas en la base de datos local."""
     comidas = Comida.objects.all()
     return render(request, 'dietas/all.html', {'comidas': comidas})
 
 
 @login_required
 def detail(request, comida_id):
+    """Muestra el detalle de una comida; lanza 404 si no existe."""
     try:
         comida = Comida.objects.get(pk=comida_id)
     except Comida.DoesNotExist:
@@ -103,6 +106,7 @@ def guardar(request, comida_id):
 
 @login_required
 def create(request):
+    """Registra una comida: la crea en el microservicio y/o en la BD local."""
     if request.method == 'POST':
         form = ComidaForm(request.POST)
         if form.is_valid():
@@ -122,6 +126,7 @@ def create(request):
 
 @login_required
 def edit(request, comida_id):
+    """Edita una comida existente en el microservicio y/o en la BD local."""
     try:
         comida = Comida.objects.get(pk=comida_id)
     except Comida.DoesNotExist:
@@ -146,6 +151,7 @@ def edit(request, comida_id):
 
 @login_required
 def delete(request, comida_id):
+    """Confirma y elimina una comida del microservicio y de la BD local."""
     try:
         comida = Comida.objects.get(pk=comida_id)
     except Comida.DoesNotExist:

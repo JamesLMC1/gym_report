@@ -9,6 +9,7 @@
         <a href="{% url 'workouts:index' %}" class="{% if request.resolver_match.app_name == 'workouts' %}active{% endif %}">Entrenamientos</a>
         <a href="{% url 'dietas:index' %}" class="{% if request.resolver_match.app_name == 'dietas' %}active{% endif %}">Dietas</a>
         <a href="{% url 'chat:index' %}" class="{% if request.resolver_match.app_name == 'chat' %}active{% endif %}">Chat</a>
+        <a href="{% url 'profesores_involucrados:index' %}" class="{% if request.resolver_match.app_name == 'profesores_involucrados' %}active{% endif %}">Docentes</a>
     </div>
     <div class="nav-user">
         {% if request.user.is_staff %}<a href="{% url 'admin:index' %}" class="nav-admin">Admin</a>{% endif %}

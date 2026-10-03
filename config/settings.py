@@ -47,6 +47,7 @@ INSTALLED_APPS = [
     'chat.apps.ChatConfig',
     'accounts.apps.AccountsConfig',
     'registro.apps.RegistroConfig',
+    'profesores_involucrados.apps.ProfesoresInvolucradosConfig',
 ]
 
 MIDDLEWARE = [
@@ -113,6 +114,9 @@ USE_TZ = True
 STATIC_URL = 'static/'
 STATICFILES_DIRS = [BASE_DIR / 'static']
 STATIC_ROOT = BASE_DIR / 'staticfiles'
+
+MEDIA_URL = 'media/'
+MEDIA_ROOT = BASE_DIR / 'media'
 
 STORAGES = {
     'default': {

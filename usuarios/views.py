@@ -7,12 +7,14 @@ from .forms import UsuarioForm
 
 @login_required
 def index(request):
+    """Página principal: muestra los últimos 5 usuarios registrados."""
     latest = Usuario.objects.all()[:5]
     return render(request, "usuarios/index.html", {"latest": latest})
 
 
 @login_required
 def detail(request, usuario_id):
+    """Muestra el detalle de un usuario; lanza 404 si no existe."""
     try:
         usuario = Usuario.objects.get(pk=usuario_id)
     except Usuario.DoesNotExist:
@@ -22,6 +24,7 @@ def detail(request, usuario_id):
 
 @login_required
 def create(request):
+    """Registra un nuevo usuario desde el formulario."""
     if request.method == "POST":
         form = UsuarioForm(request.POST)
         if form.is_valid():
@@ -34,6 +37,7 @@ def create(request):
 
 @login_required
 def edit(request, usuario_id):
+    """Edita los datos de un usuario existente."""
     try:
         usuario = Usuario.objects.get(pk=usuario_id)
     except Usuario.DoesNotExist:
@@ -51,6 +55,7 @@ def edit(request, usuario_id):
 
 @login_required
 def delete(request, usuario_id):
+    """Confirma y elimina un usuario."""
     try:
         usuario = Usuario.objects.get(pk=usuario_id)
     except Usuario.DoesNotExist:

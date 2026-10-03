@@ -1,0 +1,19 @@
+{% extends "base_authenticated.html" %}
+
+{% block title %}Docentes Involucrados{% endblock %}
+
+{% block content %}
+<div class="page-head">
+    <h1>Docentes Involucrados</h1>
+    <p class="lead">Profesores que participan en el proyecto.</p>
+</div>
+
+{% for p in profesores %}
+    <div class="card">
+        <img src="{{ p.foto.url }}" alt="{{ p }}" width="160">
+        <h3>{{ p.nombre }} {{ p.apellido }}</h3>
+    </div>
+{% empty %}
+    <p class="empty">No hay docentes registrados aún.</p>
+{% endfor %}
+{% endblock %}
