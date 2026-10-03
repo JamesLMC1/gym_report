@@ -1,7 +1,10 @@
+import uuid
+
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.http import Http404
 from django.shortcuts import redirect, render
+from django.utils import timezone
 from django.views.decorators.http import require_POST
 
 from config import api_service
@@ -14,6 +17,18 @@ CAMPOS = ('nombre', 'descripcion', 'nivel', 'duracion_dias')
 
 def _body(form):
     return {campo: form.cleaned_data.get(campo) for campo in CAMPOS}
+
+
+def _crear_local(datos):
+    """Crea la rutina solo en la BD local (microservicio no disponible)."""
+    return Rutina.objects.create(id=uuid.uuid4(), created_at=timezone.now(), **datos)
+
+
+def _actualizar_local(rutina, datos):
+    for campo, valor in datos.items():
+        setattr(rutina, campo, valor)
+    rutina.save()
+    return rutina
 
 
 def sincronizar_ejercicio(item):
@@ -130,15 +145,15 @@ def create(request):
     if request.method == 'POST':
         form = RutinaForm(request.POST)
         if form.is_valid():
-            creado, error = api_service.crear_rutina(_body(form))
-            if error:
-                messages.error(request, error)
-            elif not creado:
-                messages.error(request, 'El microservicio no devolvió la rutina creada.')
-            else:
+            datos = _body(form)
+            creado, error = api_service.crear_rutina(datos)
+            if creado:
                 sincronizar_rutina(creado)
-                messages.success(request, f'Rutina creada y sincronizada en {api_service.etiqueta_conexion()}.')
-                return redirect('workouts:index')
+                messages.success(request, f'Rutina creada en {api_service.etiqueta_conexion()}.')
+            else:
+                _crear_local(datos)
+                messages.warning(request, 'El microservicio no está disponible: rutina guardada solo en la base local.')
+            return redirect('workouts:index')
     else:
         form = RutinaForm()
     return render(request, 'workouts/form.html', {'form': form, 'titulo': 'Registrar Rutina'})
@@ -154,16 +169,15 @@ def edit(request, rutina_id):
     if request.method == 'POST':
         form = RutinaForm(request.POST, instance=rutina)
         if form.is_valid():
-            actualizado, error = api_service.actualizar_rutina(rutina_id, _body(form))
-            if error:
-                messages.error(request, error)
-            else:
-                if actualizado:
-                    sincronizar_rutina(actualizado)
-                else:
-                    form.save()
+            datos = _body(form)
+            actualizado, error = api_service.actualizar_rutina(rutina_id, datos)
+            if actualizado:
+                sincronizar_rutina(actualizado)
                 messages.success(request, f'Rutina actualizada en {api_service.etiqueta_conexion()}.')
-                return redirect('workouts:detail', rutina_id=rutina.id)
+            else:
+                _actualizar_local(rutina, datos)
+                messages.warning(request, 'El microservicio no está disponible: cambios guardados solo en la base local.')
+            return redirect('workouts:detail', rutina_id=rutina.id)
     else:
         form = RutinaForm(instance=rutina)
     return render(request, 'workouts/form.html', {'form': form, 'titulo': 'Editar Rutina'})
@@ -178,10 +192,10 @@ def delete(request, rutina_id):
 
     if request.method == 'POST':
         _, error = api_service.eliminar_rutina(rutina_id)
+        rutina.delete()
         if error:
-            messages.error(request, error)
+            messages.warning(request, 'El microservicio no está disponible: rutina eliminada solo en la base local.')
         else:
-            rutina.delete()
             messages.success(request, f'Rutina eliminada de {api_service.etiqueta_conexion()}.')
-            return redirect('workouts:index')
+        return redirect('workouts:index')
     return render(request, 'workouts/delete.html', {'rutina': rutina})

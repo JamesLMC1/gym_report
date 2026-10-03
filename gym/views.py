@@ -1,7 +1,10 @@
+import uuid
+
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.http import Http404
 from django.shortcuts import redirect, render
+from django.utils import timezone
 from django.views.decorators.http import require_POST
 
 from config import api_service
@@ -13,6 +16,18 @@ CAMPOS = ('nombre', 'grupo_muscular', 'descripcion', 'dificultad', 'imagen_url')
 
 def _body(form):
     return {campo: form.cleaned_data.get(campo) for campo in CAMPOS}
+
+
+def _crear_local(datos):
+    """Crea el ejercicio solo en la BD local (microservicio no disponible)."""
+    return Ejercicio.objects.create(id=uuid.uuid4(), created_at=timezone.now(), **datos)
+
+
+def _actualizar_local(ejercicio, datos):
+    for campo, valor in datos.items():
+        setattr(ejercicio, campo, valor)
+    ejercicio.save()
+    return ejercicio
 
 
 def sincronizar_ejercicio(item):
@@ -90,15 +105,15 @@ def create(request):
     if request.method == 'POST':
         form = EjercicioForm(request.POST)
         if form.is_valid():
-            creado, error = api_service.crear_ejercicio(_body(form))
-            if error:
-                messages.error(request, error)
-            elif not creado:
-                messages.error(request, 'El microservicio no devolvió el ejercicio creado.')
-            else:
+            datos = _body(form)
+            creado, error = api_service.crear_ejercicio(datos)
+            if creado:
                 sincronizar_ejercicio(creado)
-                messages.success(request, f'Ejercicio creado y sincronizado en {api_service.etiqueta_conexion()}.')
-                return redirect('gym:index')
+                messages.success(request, f'Ejercicio creado en {api_service.etiqueta_conexion()}.')
+            else:
+                _crear_local(datos)
+                messages.warning(request, 'El microservicio no está disponible: ejercicio guardado solo en la base local.')
+            return redirect('gym:index')
     else:
         form = EjercicioForm()
     return render(request, 'gym/form.html', {'form': form, 'titulo': 'Registrar Ejercicio'})
@@ -114,16 +129,15 @@ def edit(request, ejercicio_id):
     if request.method == 'POST':
         form = EjercicioForm(request.POST, instance=ejercicio)
         if form.is_valid():
-            actualizado, error = api_service.actualizar_ejercicio(ejercicio_id, _body(form))
-            if error:
-                messages.error(request, error)
-            else:
-                if actualizado:
-                    sincronizar_ejercicio(actualizado)
-                else:
-                    form.save()
+            datos = _body(form)
+            actualizado, error = api_service.actualizar_ejercicio(ejercicio_id, datos)
+            if actualizado:
+                sincronizar_ejercicio(actualizado)
                 messages.success(request, f'Ejercicio actualizado en {api_service.etiqueta_conexion()}.')
-                return redirect('gym:detail', ejercicio_id=ejercicio.id)
+            else:
+                _actualizar_local(ejercicio, datos)
+                messages.warning(request, 'El microservicio no está disponible: cambios guardados solo en la base local.')
+            return redirect('gym:detail', ejercicio_id=ejercicio.id)
     else:
         form = EjercicioForm(instance=ejercicio)
     return render(request, 'gym/form.html', {'form': form, 'titulo': 'Editar Ejercicio'})
@@ -138,10 +152,10 @@ def delete(request, ejercicio_id):
 
     if request.method == 'POST':
         _, error = api_service.eliminar_ejercicio(ejercicio_id)
+        ejercicio.delete()
         if error:
-            messages.error(request, error)
+            messages.warning(request, 'El microservicio no está disponible: ejercicio eliminado solo en la base local.')
         else:
-            ejercicio.delete()
             messages.success(request, f'Ejercicio eliminado de {api_service.etiqueta_conexion()}.')
-            return redirect('gym:index')
+        return redirect('gym:index')
     return render(request, 'gym/delete.html', {'ejercicio': ejercicio})

@@ -1,7 +1,10 @@
+import uuid
+
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.http import Http404
 from django.shortcuts import redirect, render
+from django.utils import timezone
 from django.views.decorators.http import require_POST
 
 from config import api_service
@@ -13,6 +16,18 @@ CAMPOS = ('nombre', 'tipo', 'calorias', 'proteinas_g', 'carbos_g', 'grasas_g', '
 
 def _body(form):
     return {campo: form.cleaned_data.get(campo) for campo in CAMPOS}
+
+
+def _crear_local(datos):
+    """Crea la comida solo en la BD local (microservicio no disponible)."""
+    return Comida.objects.create(id=uuid.uuid4(), created_at=timezone.now(), **datos)
+
+
+def _actualizar_local(comida, datos):
+    for campo, valor in datos.items():
+        setattr(comida, campo, valor)
+    comida.save()
+    return comida
 
 
 def sincronizar_comida(item):
@@ -91,15 +106,15 @@ def create(request):
     if request.method == 'POST':
         form = ComidaForm(request.POST)
         if form.is_valid():
-            creado, error = api_service.crear_comida(_body(form))
-            if error:
-                messages.error(request, error)
-            elif not creado:
-                messages.error(request, 'El microservicio no devolvió la comida creada.')
-            else:
+            datos = _body(form)
+            creado, error = api_service.crear_comida(datos)
+            if creado:
                 sincronizar_comida(creado)
-                messages.success(request, f'Comida creada y sincronizada en {api_service.etiqueta_conexion()}.')
-                return redirect('dietas:index')
+                messages.success(request, f'Comida creada en {api_service.etiqueta_conexion()}.')
+            else:
+                _crear_local(datos)
+                messages.warning(request, 'El microservicio no está disponible: comida guardada solo en la base local.')
+            return redirect('dietas:index')
     else:
         form = ComidaForm()
     return render(request, 'dietas/form.html', {'form': form, 'titulo': 'Registrar Comida'})
@@ -115,16 +130,15 @@ def edit(request, comida_id):
     if request.method == 'POST':
         form = ComidaForm(request.POST, instance=comida)
         if form.is_valid():
-            actualizado, error = api_service.actualizar_comida(comida_id, _body(form))
-            if error:
-                messages.error(request, error)
-            else:
-                if actualizado:
-                    sincronizar_comida(actualizado)
-                else:
-                    form.save()
+            datos = _body(form)
+            actualizado, error = api_service.actualizar_comida(comida_id, datos)
+            if actualizado:
+                sincronizar_comida(actualizado)
                 messages.success(request, f'Comida actualizada en {api_service.etiqueta_conexion()}.')
-                return redirect('dietas:detail', comida_id=comida.id)
+            else:
+                _actualizar_local(comida, datos)
+                messages.warning(request, 'El microservicio no está disponible: cambios guardados solo en la base local.')
+            return redirect('dietas:detail', comida_id=comida.id)
     else:
         form = ComidaForm(instance=comida)
     return render(request, 'dietas/form.html', {'form': form, 'titulo': 'Editar Comida'})
@@ -139,10 +153,10 @@ def delete(request, comida_id):
 
     if request.method == 'POST':
         _, error = api_service.eliminar_comida(comida_id)
+        comida.delete()
         if error:
-            messages.error(request, error)
+            messages.warning(request, 'El microservicio no está disponible: comida eliminada solo en la base local.')
         else:
-            comida.delete()
             messages.success(request, f'Comida eliminada de {api_service.etiqueta_conexion()}.')
-            return redirect('dietas:index')
+        return redirect('dietas:index')
     return render(request, 'dietas/delete.html', {'comida': comida})
